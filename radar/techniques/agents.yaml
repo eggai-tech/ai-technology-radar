@@ -1,0 +1,5 @@
+name: "Agents"
+quadrant: "Techniques"
+ring: "Trial"
+description: "AI agents are autonomous systems that use LLMs to reason, plan, and execute multi-step tasks with tool access."
+url: "https://en.wikipedia.org/wiki/Intelligent_agent"

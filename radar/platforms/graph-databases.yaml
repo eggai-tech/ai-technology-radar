@@ -1,0 +1,5 @@
+name: "Graph databases"
+quadrant: "Platforms"
+ring: "Assess"
+description: "Database systems optimized for storing and querying graph-structured data, increasingly used for knowledge graphs in AI applications."
+url: "https://en.wikipedia.org/wiki/Graph_database"

@@ -1,0 +1,3 @@
+name: "LLM-as-Judge"
+description: "Using large language models to evaluate and score the outputs of other LLMs, enabling scalable and automated quality assessment of AI-generated content."
+ring: "Adopt"

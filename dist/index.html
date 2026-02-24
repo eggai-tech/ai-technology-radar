@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Technology Radar</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fafafa; color: #333; }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px; text-align: center; }
+  h1 { margin-bottom: 8px; font-size: 28px; color: #1a1a1a; }
+  .subtitle { color: #666; margin-bottom: 24px; font-size: 14px; }
+  .radar-wrapper { display: inline-block; width: 100%; max-width: 800px; }
+  svg { width: 100%; height: auto; }
+  .tooltip {
+    position: fixed; display: none; background: #1e293b; color: white;
+    padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: 300px;
+    pointer-events: none; z-index: 1000; line-height: 1.4; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .tooltip .tt-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+  .tooltip .tt-ring { font-size: 11px; opacity: 0.7; margin-bottom: 6px; }
+  .tooltip .tt-desc { font-size: 12px; opacity: 0.9; }
+  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left; margin-top: 32px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .legend-quadrant h3 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; border-bottom: 2px solid #3b82f6; padding-bottom: 4px; }
+  .legend-quadrant ul { list-style: none; }
+  .legend-quadrant li { padding: 3px 0; font-size: 13px; cursor: pointer; }
+  .legend-index { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; background: #3b82f6; color: white; border-radius: 50%; font-size: 10px; font-weight: bold; margin-right: 4px; }
+  .legend-ring { font-size: 11px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+  .ring-adopt { background: #d4edda; color: #155724; }
+  .ring-trial { background: #fff3cd; color: #856404; }
+  .ring-assess { background: #fce4c1; color: #7c4a03; }
+  .ring-hold { background: #f8d7da; color: #721c24; }
+  .deprecated-section { text-align: left; margin-top: 24px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .deprecated-section h3 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; border-bottom: 2px solid #999; padding-bottom: 4px; }
+  .deprecated-section ul { list-style: none; }
+  .deprecated-section li { padding: 3px 0; font-size: 13px; cursor: pointer; color: #666; }
+  .blip circle { transition: r 0.15s, opacity 0.15s; }
+  .blip:hover circle { r: 15; opacity: 1; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Technology Radar</h1>
+  <p class="subtitle">An overview of AI technologies, tools, and techniques we're tracking</p>
+  <div class="radar-wrapper">
+    <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="400" cy="400" r="360" fill="#f8d7da" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="259.2" fill="#fce4c1" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="180" fill="#fff3cd" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="90" fill="#d4edda" stroke="#ccc" stroke-width="1"/>
+      
+    <line x1="400" y1="40" x2="400" y2="760" stroke="#bbb" stroke-width="1"/>
+    <line x1="40" y1="400" x2="760" y2="400" stroke="#bbb" stroke-width="1"/>
+  
+      <text x="445" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Adopt</text><text x="535" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Trial</text><text x="619.6" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Assess</text><text x="709.6" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Hold</text>
+      
+    <text x="760" y="26" text-anchor="end" font-size="14" font-weight="bold" fill="#333">Techniques</text>
+    <text x="760" y="788" text-anchor="end" font-size="14" font-weight="bold" fill="#333">Tools</text>
+    <text x="40" y="788" text-anchor="start" font-size="14" font-weight="bold" fill="#333">Languages &amp; Frameworks</text>
+    <text x="40" y="26" text-anchor="start" font-size="14" font-weight="bold" fill="#333">Platforms</text>
+  
+      
+      <g class="blip" data-index="1" style="cursor:pointer">
+        <circle cx="454.9" cy="287.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="454.9" y="291.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">1</text>
+      </g>
+      <g class="blip" data-index="2" style="cursor:pointer">
+        <circle cx="424.3" cy="510.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="424.3" y="514.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">2</text>
+      </g>
+      <g class="blip" data-index="3" style="cursor:pointer">
+        <circle cx="286.8" cy="291.7" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="286.8" y="295.7" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">3</text>
+      </g>
+      <g class="blip" data-index="4" style="cursor:pointer">
+        <circle cx="307.5" cy="315.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="307.5" y="319.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">4</text>
+      </g>
+      <g class="blip" data-index="5" style="cursor:pointer">
+        <circle cx="657.5" cy="487.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="657.5" y="491.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">5</text>
+      </g>
+      <g class="blip" data-index="6" style="cursor:pointer">
+        <circle cx="445.4" cy="370.8" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="445.4" y="374.8" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">6</text>
+      </g>
+      <g class="blip" data-index="7" style="cursor:pointer">
+        <circle cx="221.7" cy="479.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="221.7" y="483.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">7</text>
+      </g>
+      <g class="blip" data-index="8" style="cursor:pointer">
+        <circle cx="282.9" cy="233.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="282.9" y="237.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">8</text>
+      </g>
+      <g class="blip" data-index="9" style="cursor:pointer">
+        <circle cx="481.9" cy="536.2" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="481.9" y="540.2" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">9</text>
+      </g>
+      <g class="blip" data-index="10" style="cursor:pointer">
+        <circle cx="521.9" cy="432.3" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="521.9" y="436.3" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">10</text>
+      </g>
+      <g class="blip" data-index="11" style="cursor:pointer">
+        <circle cx="525.6" cy="422.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="525.6" y="426.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">11</text>
+      </g>
+      <g class="blip" data-index="12" style="cursor:pointer">
+        <circle cx="431.9" cy="349.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="431.9" y="353.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">12</text>
+      </g>
+      <g class="blip" data-index="13" style="cursor:pointer">
+        <circle cx="214.8" cy="338.8" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="214.8" y="342.8" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">13</text>
+      </g>
+      <g class="blip" data-index="14" style="cursor:pointer">
+        <circle cx="504.6" cy="298.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="504.6" y="302.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">14</text>
+      </g>
+      <g class="blip" data-index="15" style="cursor:pointer">
+        <circle cx="541.0" cy="456.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="541.0" y="460.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">15</text>
+      </g>
+      <g class="blip" data-index="16" style="cursor:pointer">
+        <circle cx="597.4" cy="361.9" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="597.4" y="365.9" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">16</text>
+      </g>
+      <g class="blip" data-index="17" style="cursor:pointer">
+        <circle cx="415.4" cy="371.1" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="415.4" y="375.1" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">17</text>
+      </g>
+      <g class="blip" data-index="18" style="cursor:pointer">
+        <circle cx="404.9" cy="378.6" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
+        <text x="404.9" y="382.6" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">18</text>
+      </g>
+    </svg>
+  </div>
+  <div class="legend"><div class="legend-quadrant"><h3>Techniques</h3><ul><li data-index="6"><span class="legend-index">6</span> <strong>Evals</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="12"><span class="legend-index">12</span> <strong>LLM-as-Judge</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="17"><span class="legend-index">17</span> <strong>Structured Output</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="18"><span class="legend-index">18</span> <strong>Tool Calling</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="1"><span class="legend-index">1</span> <strong>Agents</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="14"><span class="legend-index">14</span> <strong>RAG</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="16"><span class="legend-index">16</span> <strong>Spec-driven AI dev</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div><div class="legend-quadrant"><h3>Tools</h3><ul><li data-index="2"><span class="legend-index">2</span> <strong>Braintrust</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="9"><span class="legend-index">9</span> <strong>Langfuse</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="10"><span class="legend-index">10</span> <strong>LangSmith</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="11"><span class="legend-index">11</span> <strong>LiteLLM</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="15"><span class="legend-index">15</span> <strong>RAGAS</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="5"><span class="legend-index">5</span> <strong>Entire.io</strong> <span class="legend-ring ring-hold">Hold</span></li></ul></div><div class="legend-quadrant"><h3>Languages &amp; Frameworks</h3><ul><li data-index="3"><span class="legend-index">3</span> <strong>Claude Agent SDK</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="4"><span class="legend-index">4</span> <strong>DSPy</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="8"><span class="legend-index">8</span> <strong>LangChain</strong> <span class="legend-ring ring-assess">Assess</span></li><li data-index="13"><span class="legend-index">13</span> <strong>Microsoft Agent Framework</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div><div class="legend-quadrant"><h3>Platforms</h3><ul><li data-index="7"><span class="legend-index">7</span> <strong>Graph databases</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div></div>
+  <div class="deprecated-section"><h3>Deprecated</h3><ul><li class="deprecated-item" data-name="Apache Airflow"><strong>Apache Airflow</strong></li></ul></div>
+</div>
+<div class="tooltip" id="tooltip">
+  <div class="tt-name"></div>
+  <div class="tt-ring"></div>
+  <div class="tt-desc"></div>
+</div>
+<script>
+(function() {
+  var blips = [{"index":1,"name":"Agents","description":"AI agents are autonomous systems that use LLMs to reason, plan, and execute multi-step tasks with tool access.","url":"https://en.wikipedia.org/wiki/Intelligent_agent","quadrant":"Techniques","ring":"Trial","x":454.9054215351532,"y":286.9999118547746},{"index":2,"name":"Braintrust","description":"An enterprise AI evaluation platform for testing, scoring, and improving LLM-based applications with systematic experimentation.","url":"https://www.braintrust.dev/","quadrant":"Tools","ring":"Trial","x":424.3160758470581,"y":510.54479998020975},{"index":3,"name":"Claude Agent SDK","description":"Anthropic's SDK for building custom AI agents powered by Claude, with built-in tool use, memory, and orchestration capabilities.","url":"https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk","quadrant":"Languages & Frameworks","ring":"Trial","x":286.80740443010563,"y":291.6668505014818},{"index":4,"name":"DSPy","description":"A framework for programming with foundation models through declarative language model calls, automatic prompt optimization, and fine-tuning.","url":"https://dspy-docs.vercel.app/","quadrant":"Languages & Frameworks","ring":"Trial","x":307.4704066130005,"y":315.01823970746364},{"index":5,"name":"Entire.io","description":"While helpful, Entire.io generates a lot of data and it's not clear how useful that is, as long as one follows software engineering best practices, like committing frequently.","url":"https://entire.io/","quadrant":"Tools","ring":"Hold","x":657.510384959188,"y":487.5000095260215},{"index":6,"name":"Evals","description":"Evals driven development is the concept of putting data at the forefront of LLM based systems, whithout which no development should happen.","url":"https://newsletter.pragmaticengineer.com/p/evals","quadrant":"Techniques","ring":"Adopt","x":445.4476851955884,"y":370.7697260828586},{"index":7,"name":"Graph databases","description":"Database systems optimized for storing and querying graph-structured data, increasingly used for knowledge graphs in AI applications.","url":"https://en.wikipedia.org/wiki/Graph_database","quadrant":"Platforms","ring":"Assess","x":221.70669971190136,"y":479.49166519506724},{"index":8,"name":"LangChain","description":"A popular framework for developing applications powered by language models, providing chains, agents, and retrieval components.","url":"https://www.langchain.com/","quadrant":"Languages & Frameworks","ring":"Assess","x":282.870430466636,"y":233.36530499900996},{"index":9,"name":"Langfuse","description":"An open-source LLM engineering platform for observability, analytics, prompt management, and evaluation of AI applications.","url":"https://langfuse.com/","quadrant":"Tools","ring":"Trial","x":481.90231527091294,"y":536.202083386734},{"index":10,"name":"LangSmith","description":"A platform for debugging, testing, evaluating, and monitoring LLM applications built on any framework.","url":"https://www.langchain.com/langsmith","quadrant":"Tools","ring":"Trial","x":521.8901461846194,"y":432.2965374153496},{"index":11,"name":"LiteLLM","description":"A unified API interface for calling 100+ LLM providers, \nsimplifying multi-model integration and cost management. \n\nLitellm is an acceptable way for your solution to be provider and model agnostic. \nHowever, its code is full of technical debt and the pathways for each provider or model\nhave flaws and bugs. Consider whether you really need to be provider agnostic or if \nyou only need to support a couple of key providers through custom code.\"\n","url":"https://docs.litellm.ai/","quadrant":"Tools","ring":"Trial","x":525.5651038498847,"y":422.4295619970595},{"index":12,"name":"LLM-as-Judge","description":"Using large language models to evaluate and score the outputs of other LLMs, enabling scalable and automated quality assessment of AI-generated content.","quadrant":"Techniques","ring":"Adopt","x":431.8616372934023,"y":349.400353016796},{"index":13,"name":"Microsoft Agent Framework","description":"Microsoft's framework for building, orchestrating, and managing AI agents with enterprise-grade tooling and Azure integration.","url":"https://github.com/microsoft/agents","quadrant":"Languages & Frameworks","ring":"Assess","x":214.76245766224366,"y":338.75248089938157},{"index":14,"name":"RAG","description":"Retrieval-Augmented Generation combines LLM capabilities with external knowledge retrieval to produce more accurate, grounded responses.","url":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation","quadrant":"Techniques","ring":"Trial","x":504.6082863993764,"y":298.4998093417163},{"index":15,"name":"RAGAS","description":"RAGAS is a framework for evaluating Retrieval-Augmented Generation pipelines, providing metrics for faithfulness, relevance, and correctness.","url":"https://docs.ragas.io/","quadrant":"Tools","ring":"Trial","x":540.989541125065,"y":456.0306581087887},{"index":16,"name":"Spec-driven AI dev","description":"Using structured specifications to guide AI-assisted software development, ensuring consistent and predictable outputs.","url":"https://www.thoughtworks.com/radar","quadrant":"Techniques","ring":"Assess","x":597.3891184230397,"y":361.94142023336684},{"index":17,"name":"Structured Output","description":"Constraining LLM responses to follow a specific schema or format, ensuring reliable and parseable output for programmatic consumption.","quadrant":"Techniques","ring":"Adopt","x":415.449689050158,"y":371.08197016056243},{"index":18,"name":"Tool Calling","description":"Enabling LLMs to invoke external tools and APIs, allowing them to perform actions and retrieve real-time information beyond their training data.","quadrant":"Techniques","ring":"Adopt","x":404.9019227572572,"y":378.5571774295092}];
+  var deprecated = [{"name":"Apache Airflow","description":"A workflow orchestration platform for data pipelines. Deprecated in favor of more modern alternatives.","url":"https://airflow.apache.org/"}];
+  var tooltip = document.getElementById('tooltip');
+  var ttName = tooltip.querySelector('.tt-name');
+  var ttRing = tooltip.querySelector('.tt-ring');
+  var ttDesc = tooltip.querySelector('.tt-desc');
+
+  function attachBlipListeners(el, blip) {
+    el.addEventListener('mouseenter', function(e) {
+      ttName.textContent = blip.name;
+      ttRing.textContent = blip.ring ? blip.quadrant + ' / ' + blip.ring : blip.quadrant;
+      ttDesc.textContent = blip.description;
+      tooltip.style.display = 'block';
+    });
+
+    el.addEventListener('mousemove', function(e) {
+      var tx = e.clientX + 16;
+      var ty = e.clientY + 16;
+      if (tx + 300 > window.innerWidth) tx = e.clientX - 316;
+      if (ty + 100 > window.innerHeight) ty = e.clientY - 100;
+      tooltip.style.left = tx + 'px';
+      tooltip.style.top = ty + 'px';
+    });
+
+    el.addEventListener('mouseleave', function() {
+      tooltip.style.display = 'none';
+    });
+
+    el.addEventListener('click', function() {
+      if (blip.url) window.open(blip.url, '_blank');
+    });
+  }
+
+  document.querySelectorAll('.blip').forEach(function(el) {
+    var idx = parseInt(el.getAttribute('data-index'));
+    var blip = blips.find(function(b) { return b.index === idx; });
+    if (!blip) return;
+    attachBlipListeners(el, blip);
+  });
+
+  document.querySelectorAll('.legend-quadrant li[data-index]').forEach(function(el) {
+    var idx = parseInt(el.getAttribute('data-index'));
+    var blip = blips.find(function(b) { return b.index === idx; });
+    if (!blip) return;
+    attachBlipListeners(el, blip);
+  });
+
+  document.querySelectorAll('.deprecated-item').forEach(function(el) {
+    var name = el.getAttribute('data-name');
+    var entry = deprecated.find(function(d) { return d.name === name; });
+    if (!entry) return;
+    attachBlipListeners(el, { name: entry.name, quadrant: 'Deprecated', ring: '', description: entry.description, url: entry.url });
+  });
+})();
+</script>
+</body>
+</html>

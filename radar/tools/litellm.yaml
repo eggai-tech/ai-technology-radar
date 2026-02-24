@@ -1,0 +1,12 @@
+name: "LiteLLM"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  A unified API interface for calling 100+ LLM providers, 
+  simplifying multi-model integration and cost management. 
+
+  Litellm is an acceptable way for your solution to be provider and model agnostic. 
+  However, its code is full of technical debt and the pathways for each provider or model
+  have flaws and bugs. Consider whether you really need to be provider agnostic or if 
+  you only need to support a couple of key providers through custom code."
+url: "https://docs.litellm.ai/"

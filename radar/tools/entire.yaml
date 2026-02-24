@@ -1,0 +1,5 @@
+name: "Entire.io"
+quadrant: "Tools"
+ring: "Hold"
+description: "While helpful, Entire.io generates a lot of data and it's not clear how useful that is, as long as one follows software engineering best practices, like committing frequently."
+url: "https://entire.io/"

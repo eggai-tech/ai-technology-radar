@@ -1,0 +1,4 @@
+name: "Tool Calling"
+quadrant: "Techniques"
+ring: "Adopt"
+description: "Enabling LLMs to invoke external tools and APIs, allowing them to perform actions and retrieve real-time information beyond their training data."

@@ -1,0 +1,5 @@
+name: "Langfuse"
+quadrant: "Tools"
+ring: "Trial"
+description: "An open-source LLM engineering platform for observability, analytics, prompt management, and evaluation of AI applications."
+url: "https://langfuse.com/"

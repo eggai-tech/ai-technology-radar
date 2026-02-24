@@ -1,0 +1,5 @@
+name: "Microsoft Agent Framework"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: "Microsoft's framework for building, orchestrating, and managing AI agents with enterprise-grade tooling and Azure integration."
+url: "https://github.com/microsoft/agents"

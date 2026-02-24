@@ -1,0 +1,5 @@
+name: "Claude Agent SDK"
+quadrant: "Languages & Frameworks"
+ring: "Trial"
+description: "Anthropic's SDK for building custom AI agents powered by Claude, with built-in tool use, memory, and orchestration capabilities."
+url: "https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk"

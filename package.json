@@ -1,0 +1,16 @@
+{
+  "name": "technology-radar",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsx build.ts"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

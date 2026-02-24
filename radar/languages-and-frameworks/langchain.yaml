@@ -1,0 +1,5 @@
+name: "LangChain"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: "A popular framework for developing applications powered by language models, providing chains, agents, and retrieval components."
+url: "https://www.langchain.com/"

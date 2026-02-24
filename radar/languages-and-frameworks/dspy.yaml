@@ -1,0 +1,5 @@
+name: "DSPy"
+quadrant: "Languages & Frameworks"
+ring: "Trial"
+description: "A framework for programming with foundation models through declarative language model calls, automatic prompt optimization, and fine-tuning."
+url: "https://dspy-docs.vercel.app/"

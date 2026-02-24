@@ -1,0 +1,4 @@
+name: "Structured Output"
+quadrant: "Techniques"
+ring: "Adopt"
+description: "Constraining LLM responses to follow a specific schema or format, ensuring reliable and parseable output for programmatic consumption."
