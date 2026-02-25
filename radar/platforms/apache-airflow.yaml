@@ -1,4 +1,6 @@
 name: "Apache Airflow"
+quadrant: "Platforms"
+ring: "Assess"
 description: |
   A workflow orchestration platform for data pipelines. Deprecated in
   favor of more modern alternatives.

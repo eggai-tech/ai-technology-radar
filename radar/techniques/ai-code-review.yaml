@@ -1,9 +1,10 @@
 name: "AI Code Review"
 quadrant: "Techniques"
-ring: "Trial"
+ring: "Adopt"
 description: |
   Automated AI-powered code review integrated into pull request
   workflows. Tools like CodeRabbit and Qodo provide contextual inline
   comments, bug detection, and cross-repository impact analysis.
   Complements agentic coding by providing an automated quality gate.
-url: "https://www.qodo.ai/blog/ai-code-review/"
+
+  There are multiple vendors, like Code Rabbit, or Qodo. Github also can use codex for automated code reviews.
