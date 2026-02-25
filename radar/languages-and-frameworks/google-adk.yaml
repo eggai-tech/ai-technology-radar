@@ -1,0 +1,9 @@
+name: "Google ADK (Agent Development Kit)"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Open-source agent framework from Google, model-agnostic and
+  deployment-agnostic despite being optimized for Gemini/GCP. Features
+  built-in bidirectional audio/video streaming for human-like agent
+  conversations.
+url: "https://google.github.io/adk-docs/"

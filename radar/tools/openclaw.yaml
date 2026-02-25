@@ -1,0 +1,12 @@
+name: "OpenClaw"
+quadrant: "Tools"
+ring: "Hold"
+description: |
+  OpenClaw is an open-source AI agent that runs locally and can execute
+  shell commands, manage files, and automate browser tasks. However, it
+  lacks a strong security model out of the box—agents can escalate
+  actions beyond user intent (e.g. deleting data without confirmation),
+  and granting broad system permissions to an LLM-driven tool creates a
+  significant attack surface for data leaks and uncontrolled
+  automation.
+url: "https://openclaw.ai/"

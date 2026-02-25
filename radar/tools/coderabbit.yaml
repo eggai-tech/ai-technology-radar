@@ -1,0 +1,9 @@
+name: "CodeRabbit"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  AI-assisted pull request reviewer that runs inside GitHub/GitLab,
+  providing automated PR summaries, inline code comments, and suggested
+  fixes. Complements agentic coding by providing an automated quality
+  gate before merging.
+url: "https://coderabbit.ai/"

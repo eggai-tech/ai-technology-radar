@@ -1,0 +1,9 @@
+name: "A2A (Agent-to-Agent Protocol)"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  Google-led open protocol complementing MCP that enables agents built
+  by different vendors to discover and communicate with each other.
+  Still early but has significant interoperability potential for
+  multi-agent systems.
+url: "https://google.github.io/A2A/"

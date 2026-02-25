@@ -1,0 +1,9 @@
+name: "LoRA / QLoRA Fine-Tuning"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  LoRA reduces trainable parameters by ~99%, enabling fine-tuning of
+  large models on a single GPU. QLoRA extends this with 4-bit
+  quantization. The dominant approach for teams needing domain
+  adaptation beyond what RAG and prompting alone can achieve.
+url: "https://huggingface.co/docs/peft/main/en/conceptual_guides/lora"

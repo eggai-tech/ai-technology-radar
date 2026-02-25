@@ -1,0 +1,9 @@
+name: "Synthetic Data Generation"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  Using LLMs to generate training, evaluation, and fine-tuning
+  datasets through distillation from larger models or self-improvement
+  loops. Critical for building domain-specific models or comprehensive
+  eval suites where real data is scarce or expensive to label.
+url: "https://www.confident-ai.com/blog/the-definitive-guide-to-synthetic-data-generation-using-llms"

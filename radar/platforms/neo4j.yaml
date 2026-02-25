@@ -1,0 +1,14 @@
+name: "Neo4j"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  The leading graph database, widely adopted for knowledge graphs and
+  GraphRAG implementations. Cypher's readable query language and a
+  rich algorithm library (PageRank, community detection, shortest
+  path) make it the go-to for complex graph analytics. Recent releases
+  add native vector search with metadata filtering and AI-native
+  Cypher procedures, enabling hybrid vector + graph traversal in a
+  single query. Best suited for teams with dedicated graph workloads
+  that justify separate infrastructure — teams already on PostgreSQL
+  should evaluate Apache AGE as a lighter-weight alternative.
+url: "https://neo4j.com/"

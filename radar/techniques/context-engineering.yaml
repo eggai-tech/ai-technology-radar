@@ -1,0 +1,9 @@
+name: "Context Engineering"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  The systematic management of everything fed into a model — user
+  metadata, conversation history, data schemas, tool definitions,
+  memory, and caching strategies. The evolution beyond basic prompt
+  engineering for building reliable LLM applications.
+url: "https://www.promptingguide.ai/guides/context-engineering-guide"

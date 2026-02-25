@@ -1,0 +1,9 @@
+name: "GRPO (Group Relative Policy Optimization)"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  The RL algorithm behind DeepSeek-R1's reasoning capabilities.
+  Eliminates both the reward model and critic from the RLHF pipeline,
+  cutting compute requirements roughly in half versus PPO. Incentivizes
+  emergent reasoning behaviors like self-reflection and verification.
+url: "https://arxiv.org/abs/2501.12948"

@@ -1,0 +1,8 @@
+name: "OpenAI Agents SDK"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Production-ready agent framework with minimal abstractions (Agents,
+  Handoffs, Guardrails) and built-in tracing. Provider-agnostic
+  despite the name, it is the successor to Swarm.
+url: "https://openai.github.io/openai-agents-python/"

@@ -1,5 +1,7 @@
 name: "Braintrust"
 quadrant: "Tools"
 ring: "Trial"
-description: "An enterprise AI evaluation platform for testing, scoring, and improving LLM-based applications with systematic experimentation."
+description: |
+  An enterprise AI evaluation platform for testing, scoring, and
+  improving LLM-based applications with systematic experimentation.
 url: "https://www.braintrust.dev/"

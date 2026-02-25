@@ -1,0 +1,9 @@
+name: "Test-Time Compute"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  Allocating additional computation at inference time to improve
+  response quality through extended chain-of-thought reasoning.
+  Popularized by OpenAI's o-series and DeepSeek-R1, representing a
+  fundamental shift in the cost/quality tradeoff.
+url: "https://huggingface.co/learn/llm-course/en/chapter12/3"

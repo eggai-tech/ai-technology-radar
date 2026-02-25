@@ -1,0 +1,9 @@
+name: "Spring AI"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Spring's official AI framework, GA since May 2025. Brings Spring's
+  abstraction philosophy to LLM integration — write code once, switch
+  providers via configuration. Supports all major AI providers, vector
+  databases, Tool Calling, RAG, MCP, and structured output.
+url: "https://spring.io/projects/spring-ai"

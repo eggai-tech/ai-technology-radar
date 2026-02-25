@@ -1,0 +1,9 @@
+name: "Helicone"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  Open-source AI gateway and observability platform built in Rust.
+  Routes, caches, load-balances, and logs requests across 100+ LLM
+  providers with minimal latency overhead. Semantic caching can reduce
+  costs by up to 95%.
+url: "https://www.helicone.ai/"

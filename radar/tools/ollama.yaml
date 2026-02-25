@@ -1,0 +1,8 @@
+name: "Ollama"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  Docker-style Go binary that makes running local LLMs trivially easy.
+  Excellent for developer experimentation, local testing, and rapid
+  prototyping with an OpenAI-compatible API.
+url: "https://ollama.com/"

@@ -1,0 +1,9 @@
+name: "MCP (Model Context Protocol)"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  Open protocol originally by Anthropic (now under Linux Foundation)
+  that standardizes how LLMs connect to external tools and data
+  sources. Adopted by OpenAI, Google, and major toolmakers, it is
+  becoming the de facto integration standard for LLM applications.
+url: "https://modelcontextprotocol.io/"

@@ -1,0 +1,9 @@
+name: "Hyperterse"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  Open-source framework for building MCP tool servers from declaration
+  files. Collapses all tools behind search and execute so AI agents
+  dynamically discover what they need. Includes authentication,
+  caching, and OpenTelemetry observability out of the box.
+url: "https://hyperterse.com/"

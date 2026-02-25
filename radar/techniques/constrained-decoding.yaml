@@ -1,0 +1,9 @@
+name: "Constrained Decoding"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  Token-level enforcement of output schemas (JSON Schema, regex,
+  grammars) through FSM-guided generation and grammar-based masking.
+  Guarantees 100% structural compliance versus best-effort prompting.
+  Now integrated into vLLM, OpenAI, and other serving engines.
+url: "https://blog.vllm.ai/2025/01/14/struct-decode-intro.html"

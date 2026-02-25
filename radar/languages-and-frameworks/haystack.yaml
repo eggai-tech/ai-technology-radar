@@ -1,0 +1,9 @@
+name: "Haystack"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Pipeline-first framework from deepset focused on production-grade
+  search and RAG systems. Excels at complex document processing
+  workflows with strong enterprise search backend support
+  (Elasticsearch, OpenSearch).
+url: "https://haystack.deepset.ai/"

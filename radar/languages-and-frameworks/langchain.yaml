@@ -1,5 +1,10 @@
 name: "LangChain"
 quadrant: "Languages & Frameworks"
-ring: "Assess"
-description: "A popular framework for developing applications powered by language models, providing chains, agents, and retrieval components."
+ring: "Hold"
+description: |
+  A popular framework for developing applications powered by language
+  models, providing chains, agents, and retrieval components.
+  Although it's level of abstraction is good, it has frequently shown to 
+  make the code  for even smaller projects too complicated to maintain 
+  compared to the value it adds.
 url: "https://www.langchain.com/"

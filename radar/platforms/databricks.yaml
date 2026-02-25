@@ -1,0 +1,9 @@
+name: "Databricks"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  Unified data + AI platform with deep MLflow integration, Unity
+  Catalog for AI asset governance, and Mosaic AI for model serving.
+  Strong choice for organizations already invested in the Databricks
+  lakehouse.
+url: "https://www.databricks.com/"

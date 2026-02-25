@@ -1,0 +1,9 @@
+name: "DPO (Direct Preference Optimization)"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  A simpler alternative to RLHF that sidesteps reward model training
+  by deriving a closed-form solution to the preference optimization
+  objective. More stable and often matches RLHF performance with
+  significantly less infrastructure complexity.
+url: "https://arxiv.org/abs/2305.18290"

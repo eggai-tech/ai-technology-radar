@@ -4,14 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AI Technology Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fafafa; color: #333; }
-  .container { max-width: 900px; margin: 0 auto; padding: 20px; text-align: center; }
-  h1 { margin-bottom: 8px; font-size: 28px; color: #1a1a1a; }
-  .subtitle { color: #666; margin-bottom: 24px; font-size: 14px; }
-  .radar-wrapper { display: inline-block; width: 100%; max-width: 800px; }
-  svg { width: 100%; height: auto; }
+  body { font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif; background: #fff; color: #333; }
+  .container { max-width: 1500px; margin: 0 auto; padding: 0; text-align: center; }
+  svg#radar { width: 100%; max-width: 1450px; height: auto; }
+  .deprecated-section { text-align: left; max-width: 900px; margin: 0 auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .deprecated-section h3 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; border-bottom: 2px solid #999; padding-bottom: 4px; }
+  .deprecated-section ul { list-style: none; }
+  .deprecated-section li { padding: 3px 0; font-size: 13px; cursor: pointer; color: #666; }
   .tooltip {
     position: fixed; display: none; background: #1e293b; color: white;
     padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: 300px;
@@ -20,142 +25,707 @@
   .tooltip .tt-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
   .tooltip .tt-ring { font-size: 11px; opacity: 0.7; margin-bottom: 6px; }
   .tooltip .tt-desc { font-size: 12px; opacity: 0.9; }
-  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left; margin-top: 32px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .legend-quadrant h3 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; border-bottom: 2px solid #3b82f6; padding-bottom: 4px; }
-  .legend-quadrant ul { list-style: none; }
-  .legend-quadrant li { padding: 3px 0; font-size: 13px; cursor: pointer; }
-  .legend-index { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; background: #3b82f6; color: white; border-radius: 50%; font-size: 10px; font-weight: bold; margin-right: 4px; }
-  .legend-ring { font-size: 11px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
-  .ring-adopt { background: #d4edda; color: #155724; }
-  .ring-trial { background: #fff3cd; color: #856404; }
-  .ring-assess { background: #fce4c1; color: #7c4a03; }
-  .ring-hold { background: #f8d7da; color: #721c24; }
-  .deprecated-section { text-align: left; margin-top: 24px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .deprecated-section h3 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; border-bottom: 2px solid #999; padding-bottom: 4px; }
-  .deprecated-section ul { list-style: none; }
-  .deprecated-section li { padding: 3px 0; font-size: 13px; cursor: pointer; color: #666; }
-  .blip circle { transition: r 0.15s, opacity 0.15s; }
-  .blip:hover circle { r: 15; opacity: 1; }
+  a.hover-underline { text-decoration: none; }
+  a.hover-underline:hover { text-decoration: underline; }
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 2000; justify-content: center; align-items: center;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: #1e293b; color: #f1f5f9; border-radius: 12px; padding: 28px 32px;
+    max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto;
+    position: relative; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    font-size: 14px; line-height: 1.6;
+  }
+  .modal-close {
+    position: absolute; top: 12px; right: 16px; background: none; border: none;
+    color: #94a3b8; font-size: 24px; cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { color: #fff; }
+  .modal-title { font-size: 20px; margin-bottom: 8px; color: #fff; padding-right: 28px; }
+  .modal-meta { display: flex; gap: 8px; margin-bottom: 16px; }
+  .modal-meta span {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .modal-meta .badge-quadrant { background: #334155; color: #cbd5e1; }
+  .modal-meta .badge-ring { color: #fff; }
+  .modal-desc { margin-bottom: 16px; color: #cbd5e1; }
+  .modal-desc a { color: #38bdf8; }
+  .modal-desc a:hover { text-decoration: underline; }
+  .modal-link {
+    display: inline-block; color: #38bdf8; text-decoration: none; font-size: 13px;
+  }
+  .modal-link:hover { text-decoration: underline; }
+  .modal-link:empty { display: none; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>AI Technology Radar</h1>
-  <p class="subtitle">An overview of AI technologies, tools, and techniques we're tracking</p>
-  <div class="radar-wrapper">
-    <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="400" cy="400" r="360" fill="#f8d7da" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="259.2" fill="#fce4c1" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="180" fill="#fff3cd" stroke="#ccc" stroke-width="1"/><circle cx="400" cy="400" r="90" fill="#d4edda" stroke="#ccc" stroke-width="1"/>
-      
-    <line x1="400" y1="40" x2="400" y2="760" stroke="#bbb" stroke-width="1"/>
-    <line x1="40" y1="400" x2="760" y2="400" stroke="#bbb" stroke-width="1"/>
-  
-      <text x="445" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Adopt</text><text x="535" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Trial</text><text x="619.6" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Assess</text><text x="709.6" y="396" text-anchor="middle" font-size="11" fill="#666" font-weight="bold">Hold</text>
-      
-    <text x="760" y="26" text-anchor="end" font-size="14" font-weight="bold" fill="#333">Techniques</text>
-    <text x="760" y="788" text-anchor="end" font-size="14" font-weight="bold" fill="#333">Tools</text>
-    <text x="40" y="788" text-anchor="start" font-size="14" font-weight="bold" fill="#333">Languages &amp; Frameworks</text>
-    <text x="40" y="26" text-anchor="start" font-size="14" font-weight="bold" fill="#333">Platforms</text>
-  
-      
-      <g class="blip" data-index="1" style="cursor:pointer">
-        <circle cx="454.9" cy="287.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="454.9" y="291.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">1</text>
-      </g>
-      <g class="blip" data-index="2" style="cursor:pointer">
-        <circle cx="424.3" cy="510.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="424.3" y="514.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">2</text>
-      </g>
-      <g class="blip" data-index="3" style="cursor:pointer">
-        <circle cx="286.8" cy="291.7" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="286.8" y="295.7" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">3</text>
-      </g>
-      <g class="blip" data-index="4" style="cursor:pointer">
-        <circle cx="307.5" cy="315.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="307.5" y="319.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">4</text>
-      </g>
-      <g class="blip" data-index="5" style="cursor:pointer">
-        <circle cx="657.5" cy="487.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="657.5" y="491.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">5</text>
-      </g>
-      <g class="blip" data-index="6" style="cursor:pointer">
-        <circle cx="445.4" cy="370.8" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="445.4" y="374.8" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">6</text>
-      </g>
-      <g class="blip" data-index="7" style="cursor:pointer">
-        <circle cx="221.7" cy="479.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="221.7" y="483.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">7</text>
-      </g>
-      <g class="blip" data-index="8" style="cursor:pointer">
-        <circle cx="282.9" cy="233.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="282.9" y="237.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">8</text>
-      </g>
-      <g class="blip" data-index="9" style="cursor:pointer">
-        <circle cx="481.9" cy="536.2" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="481.9" y="540.2" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">9</text>
-      </g>
-      <g class="blip" data-index="10" style="cursor:pointer">
-        <circle cx="521.9" cy="432.3" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="521.9" y="436.3" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">10</text>
-      </g>
-      <g class="blip" data-index="11" style="cursor:pointer">
-        <circle cx="525.6" cy="422.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="525.6" y="426.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">11</text>
-      </g>
-      <g class="blip" data-index="12" style="cursor:pointer">
-        <circle cx="431.9" cy="349.4" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="431.9" y="353.4" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">12</text>
-      </g>
-      <g class="blip" data-index="13" style="cursor:pointer">
-        <circle cx="214.8" cy="338.8" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="214.8" y="342.8" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">13</text>
-      </g>
-      <g class="blip" data-index="14" style="cursor:pointer">
-        <circle cx="504.6" cy="298.5" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="504.6" y="302.5" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">14</text>
-      </g>
-      <g class="blip" data-index="15" style="cursor:pointer">
-        <circle cx="541.0" cy="456.0" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="541.0" y="460.0" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">15</text>
-      </g>
-      <g class="blip" data-index="16" style="cursor:pointer">
-        <circle cx="597.4" cy="361.9" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="597.4" y="365.9" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">16</text>
-      </g>
-      <g class="blip" data-index="17" style="cursor:pointer">
-        <circle cx="415.4" cy="371.1" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="415.4" y="375.1" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">17</text>
-      </g>
-      <g class="blip" data-index="18" style="cursor:pointer">
-        <circle cx="404.9" cy="378.6" r="12" fill="#3b82f6" stroke="#1e40af" stroke-width="1.5" opacity="0.9"/>
-        <text x="404.9" y="382.6" text-anchor="middle" font-size="10" fill="white" font-weight="bold" pointer-events="none">18</text>
-      </g>
-    </svg>
-  </div>
-  <div class="legend"><div class="legend-quadrant"><h3>Techniques</h3><ul><li data-index="6"><span class="legend-index">6</span> <strong>Evals</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="12"><span class="legend-index">12</span> <strong>LLM-as-Judge</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="17"><span class="legend-index">17</span> <strong>Structured Output</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="18"><span class="legend-index">18</span> <strong>Tool Calling</strong> <span class="legend-ring ring-adopt">Adopt</span></li><li data-index="1"><span class="legend-index">1</span> <strong>Agents</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="14"><span class="legend-index">14</span> <strong>RAG</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="16"><span class="legend-index">16</span> <strong>Spec-driven AI dev</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div><div class="legend-quadrant"><h3>Tools</h3><ul><li data-index="2"><span class="legend-index">2</span> <strong>Braintrust</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="9"><span class="legend-index">9</span> <strong>Langfuse</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="10"><span class="legend-index">10</span> <strong>LangSmith</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="11"><span class="legend-index">11</span> <strong>LiteLLM</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="15"><span class="legend-index">15</span> <strong>RAGAS</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="5"><span class="legend-index">5</span> <strong>Entire.io</strong> <span class="legend-ring ring-hold">Hold</span></li></ul></div><div class="legend-quadrant"><h3>Languages &amp; Frameworks</h3><ul><li data-index="3"><span class="legend-index">3</span> <strong>Claude Agent SDK</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="4"><span class="legend-index">4</span> <strong>DSPy</strong> <span class="legend-ring ring-trial">Trial</span></li><li data-index="8"><span class="legend-index">8</span> <strong>LangChain</strong> <span class="legend-ring ring-assess">Assess</span></li><li data-index="13"><span class="legend-index">13</span> <strong>Microsoft Agent Framework</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div><div class="legend-quadrant"><h3>Platforms</h3><ul><li data-index="7"><span class="legend-index">7</span> <strong>Graph databases</strong> <span class="legend-ring ring-assess">Assess</span></li></ul></div></div>
+  <svg id="radar"></svg>
   <div class="deprecated-section"><h3>Deprecated</h3><ul><li class="deprecated-item" data-name="Apache Airflow"><strong>Apache Airflow</strong></li></ul></div>
 </div>
-<div class="tooltip" id="tooltip">
+<div class="tooltip" id="dep-tooltip">
   <div class="tt-name"></div>
   <div class="tt-ring"></div>
   <div class="tt-desc"></div>
 </div>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <h2 class="modal-title" id="modal-title"></h2>
+    <div class="modal-meta" id="modal-meta"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <a class="modal-link" id="modal-link" target="_blank" rel="noopener"></a>
+  </div>
+</div>
+<script>
+// The MIT License (MIT)
+
+// Copyright (c) 2017-2024 Zalando SE
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+
+function radar_visualization(config) {
+
+  config.svg_id = config.svg || "radar";
+  config.width = config.width || 1450;
+  config.height = config.height || 1000;
+  config.colors = ("colors" in config) ? config.colors : {
+      background: "#fff",
+      grid: '#dddde0',
+      inactive: "#ddd"
+    };
+  config.print_layout = ("print_layout" in config) ? config.print_layout : true;
+  config.links_in_new_tabs = ("links_in_new_tabs" in config) ? config.links_in_new_tabs : true;
+  config.repo_url = config.repo_url || '#';
+  config.print_ring_descriptions_table = ("print_ring_descriptions_table" in config) ? config.print_ring_descriptions_table : false;
+  config.legend_offset = config.legend_offset || [
+    { x: 450, y: 90 },
+    { x: -675, y: 90 },
+    { x: -675, y: -310 },
+    { x: 450, y: -310 }
+  ]
+  config.title_offset = config.title_offset || { x: -675, y: -420 };
+  config.footer_offset = config.footer_offset || { x: -155, y: 450 };
+  config.legend_column_width = config.legend_column_width || 140
+  config.legend_line_height = config.legend_line_height || 10
+
+  // custom random number generator, to make random sequence reproducible
+  // source: https://stackoverflow.com/questions/521295
+  var seed = 42;
+  function random() {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function random_between(min, max) {
+    return min + random() * (max - min);
+  }
+
+  function normal_between(min, max) {
+    return min + (random() + random()) * 0.5 * (max - min);
+  }
+
+  // radial_min / radial_max are multiples of PI
+  const quadrants = [
+    { radial_min: 0, radial_max: 0.5, factor_x: 1, factor_y: 1 },
+    { radial_min: 0.5, radial_max: 1, factor_x: -1, factor_y: 1 },
+    { radial_min: -1, radial_max: -0.5, factor_x: -1, factor_y: -1 },
+    { radial_min: -0.5, radial_max: 0, factor_x: 1, factor_y: -1 }
+  ];
+
+  const rings = [
+    { radius: 130 },
+    { radius: 220 },
+    { radius: 310 },
+    { radius: 400 }
+  ];
+
+  function polar(cartesian) {
+    var x = cartesian.x;
+    var y = cartesian.y;
+    return {
+      t: Math.atan2(y, x),
+      r: Math.sqrt(x * x + y * y)
+    }
+  }
+
+  function cartesian(polar) {
+    return {
+      x: polar.r * Math.cos(polar.t),
+      y: polar.r * Math.sin(polar.t)
+    }
+  }
+
+  function bounded_interval(value, min, max) {
+    var low = Math.min(min, max);
+    var high = Math.max(min, max);
+    return Math.min(Math.max(value, low), high);
+  }
+
+  function bounded_ring(polar, r_min, r_max) {
+    return {
+      t: polar.t,
+      r: bounded_interval(polar.r, r_min, r_max)
+    }
+  }
+
+  function bounded_box(point, min, max) {
+    return {
+      x: bounded_interval(point.x, min.x, max.x),
+      y: bounded_interval(point.y, min.y, max.y)
+    }
+  }
+
+  function segment(quadrant, ring) {
+    var polar_min = {
+      t: quadrants[quadrant].radial_min * Math.PI,
+      r: ring === 0 ? 30 : rings[ring - 1].radius
+    };
+    var polar_max = {
+      t: quadrants[quadrant].radial_max * Math.PI,
+      r: rings[ring].radius
+    };
+    var cartesian_min = {
+      x: 15 * quadrants[quadrant].factor_x,
+      y: 15 * quadrants[quadrant].factor_y
+    };
+    var cartesian_max = {
+      x: rings[3].radius * quadrants[quadrant].factor_x,
+      y: rings[3].radius * quadrants[quadrant].factor_y
+    };
+    return {
+      clipx: function(d) {
+        var c = bounded_box(d, cartesian_min, cartesian_max);
+        var p = bounded_ring(polar(c), polar_min.r + 15, polar_max.r - 15);
+        d.x = cartesian(p).x; // adjust data too!
+        return d.x;
+      },
+      clipy: function(d) {
+        var c = bounded_box(d, cartesian_min, cartesian_max);
+        var p = bounded_ring(polar(c), polar_min.r + 15, polar_max.r - 15);
+        d.y = cartesian(p).y; // adjust data too!
+        return d.y;
+      },
+      random: function() {
+        return cartesian({
+          t: random_between(polar_min.t, polar_max.t),
+          r: normal_between(polar_min.r, polar_max.r)
+        });
+      }
+    }
+  }
+
+  // position each entry randomly in its segment
+  for (var i = 0; i < config.entries.length; i++) {
+    var entry = config.entries[i];
+    entry.segment = segment(entry.quadrant, entry.ring);
+    var point = entry.segment.random();
+    entry.x = point.x;
+    entry.y = point.y;
+    entry.color = entry.active || config.print_layout ?
+      config.rings[entry.ring].color : config.colors.inactive;
+  }
+
+  // partition entries according to segments
+  var segmented = new Array(4);
+  for (let quadrant = 0; quadrant < 4; quadrant++) {
+    segmented[quadrant] = new Array(4);
+    for (var ring = 0; ring < 4; ring++) {
+      segmented[quadrant][ring] = [];
+    }
+  }
+  for (var i=0; i<config.entries.length; i++) {
+    var entry = config.entries[i];
+    segmented[entry.quadrant][entry.ring].push(entry);
+  }
+
+  // assign unique sequential id to each entry
+  var id = 1;
+  for (quadrant of [2,3,1,0]) {
+    for (var ring = 0; ring < 4; ring++) {
+      var entries = segmented[quadrant][ring];
+      entries.sort(function(a,b) { return a.label.localeCompare(b.label); })
+      for (var i=0; i<entries.length; i++) {
+        entries[i].id = "" + id++;
+      }
+    }
+  }
+
+  function translate(x, y) {
+    return "translate(" + x + "," + y + ")";
+  }
+
+  function viewbox(quadrant) {
+    return [
+      Math.max(0, quadrants[quadrant].factor_x * 400) - 420,
+      Math.max(0, quadrants[quadrant].factor_y * 400) - 420,
+      440,
+      440
+    ].join(" ");
+  }
+
+  // adjust with config.scale.
+  config.scale = config.scale || 1;
+  var scaled_width = config.width * config.scale;
+  var scaled_height = config.height * config.scale;
+
+  var svg = d3.select("svg#" + config.svg_id)
+    .style("background-color", config.colors.background)
+    .attr("width", scaled_width)
+    .attr("height", scaled_height);
+
+  var radar = svg.append("g");
+  if ("zoomed_quadrant" in config) {
+    svg.attr("viewBox", viewbox(config.zoomed_quadrant));
+  } else {
+    radar.attr("transform", translate(scaled_width / 2, scaled_height / 2).concat(`scale(${config.scale})`));
+  }
+
+  var grid = radar.append("g");
+
+  // define default font-family
+  config.font_family = config.font_family || "Arial, Helvetica";
+
+  // draw grid lines
+  grid.append("line")
+    .attr("x1", 0).attr("y1", -400)
+    .attr("x2", 0).attr("y2", 400)
+    .style("stroke", config.colors.grid)
+    .style("stroke-width", 1);
+  grid.append("line")
+    .attr("x1", -400).attr("y1", 0)
+    .attr("x2", 400).attr("y2", 0)
+    .style("stroke", config.colors.grid)
+    .style("stroke-width", 1);
+
+  // background color. Usage `.attr("filter", "url(#solid)")`
+  // SOURCE: https://stackoverflow.com/a/31013492/2609980
+  var defs = grid.append("defs");
+  var filter = defs.append("filter")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 1)
+    .attr("height", 1)
+    .attr("id", "solid");
+  filter.append("feFlood")
+    .attr("flood-color", "rgb(0, 0, 0, 0.8)");
+  filter.append("feComposite")
+    .attr("in", "SourceGraphic");
+
+  // draw rings
+  for (var i = 0; i < rings.length; i++) {
+    grid.append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", rings[i].radius)
+      .style("fill", "none")
+      .style("stroke", config.colors.grid)
+      .style("stroke-width", 1);
+    if (config.print_layout) {
+      grid.append("text")
+        .text(config.rings[i].name)
+        .attr("y", -rings[i].radius + 62)
+        .attr("text-anchor", "middle")
+        .style("fill", config.rings[i].color)
+        .style("opacity", 0.35)
+        .style("font-family", config.font_family)
+        .style("font-size", "42px")
+        .style("font-weight", "bold")
+        .style("pointer-events", "none")
+        .style("user-select", "none");
+    }
+  }
+
+  function legend_transform(quadrant, ring, legendColumnWidth, index=null, previousHeight = null) {
+    const dx = ring < 2 ? 0 : legendColumnWidth;
+    let dy = (index == null ? -16 : index * config.legend_line_height);
+
+    if (ring % 2 === 1) {
+      dy = dy + 36 + previousHeight;
+    }
+
+    return translate(
+      config.legend_offset[quadrant].x + dx,
+      config.legend_offset[quadrant].y + dy
+    );
+  }
+
+  // draw title and legend (only in print layout)
+  if (config.print_layout) {
+    // title
+    radar.append("a")
+      .attr("href", config.repo_url)
+      .attr("transform", translate(config.title_offset.x, config.title_offset.y))
+      .append("text")
+      .attr("class", "hover-underline")  // add class for hover effect
+      .text(config.title)
+      .style("font-family", config.font_family)
+      .style("font-size", "30")
+      .style("font-weight", "bold")
+
+    // date
+    radar
+      .append("text")
+      .attr("transform", translate(config.title_offset.x, config.title_offset.y + 20))
+      .text(config.date || "")
+      .style("font-family", config.font_family)
+      .style("font-size", "14")
+      .style("fill", "#999")
+
+    // footer
+    radar.append("text")
+      .attr("transform", translate(config.footer_offset.x, config.footer_offset.y))
+      .text("▲ moved up     ▼ moved down     ★ new     ⬤ no change")
+      .attr("xml:space", "preserve")
+      .style("font-family", config.font_family)
+      .style("font-size", "12px");
+
+    // legend
+    const legend = radar.append("g");
+    for (let quadrant = 0; quadrant < 4; quadrant++) {
+      legend.append("text")
+        .attr("transform", translate(
+          config.legend_offset[quadrant].x,
+          config.legend_offset[quadrant].y - 45
+        ))
+        .text(config.quadrants[quadrant].name)
+        .style("font-family", config.font_family)
+        .style("font-size", "18px")
+        .style("font-weight", "bold");
+      let previousLegendHeight = 0
+      for (let ring = 0; ring < 4; ring++) {
+        if (ring % 2 === 0) {
+          previousLegendHeight = 0
+        }
+        legend.append("text")
+          .attr("transform", legend_transform(quadrant, ring, config.legend_column_width, null, previousLegendHeight))
+          .text(config.rings[ring].name)
+          .style("font-family", config.font_family)
+          .style("font-size", "12px")
+          .style("font-weight", "bold")
+          .style("fill", config.rings[ring].color);
+        legend.selectAll(".legend" + quadrant + ring)
+          .data(segmented[quadrant][ring])
+          .enter()
+            .append("a")
+              .attr("href", function (d, i) {
+                 return d.link ? d.link : "#"; // stay on same page if no link was provided
+              })
+              // Add a target if (and only if) there is a link and we want new tabs
+              .attr("target", function (d, i) {
+                 return (d.link && config.links_in_new_tabs) ? "_blank" : null;
+              })
+            .append("text")
+              .attr("transform", function(d, i) { return legend_transform(quadrant, ring, config.legend_column_width, i, previousLegendHeight); })
+              .attr("class", "legend" + quadrant + ring)
+              .attr("id", function(d, i) { return "legendItem" + d.id; })
+              .text(function(d) { return d.id + ". " + d.label; })
+              .style("font-family", config.font_family)
+              .style("font-size", "11px")
+              .on("mouseover", function(event, d) { showBubble(d); highlightLegendItem(d); })
+              .on("mouseout", function(event, d) { hideBubble(d); unhighlightLegendItem(d); })
+              .call(wrap_text)
+              .each(function() {
+                previousLegendHeight += d3.select(this).node().getBBox().height;
+              });
+      }
+    }
+  }
+
+  function wrap_text(text) {
+    let heightForNextElement = 0;
+
+    text.each(function() {
+      const textElement = d3.select(this);
+      const words = textElement.text().split(" ");
+      let line = [];
+
+      // Use '|' at the end of the string so that spaces are not trimmed during rendering.
+      const number = `${textElement.text().split(".")[0]}. |`;
+      const legendNumberText = textElement.append("tspan").text(number);
+      const legendBar = textElement.append("tspan").text('|');
+      const numberWidth = legendNumberText.node().getComputedTextLength() - legendBar.node().getComputedTextLength();
+
+      textElement.text(null);
+
+      let tspan = textElement
+          .append("tspan")
+          .attr("x", 0)
+          .attr("y", heightForNextElement)
+          .attr("dy", 0);
+
+      for (let position = 0; position < words.length; position++) {
+        line.push(words[position]);
+        tspan.text(line.join(" "));
+
+        // Avoid wrap for first line (position !== 1) to not end up in a situation where the long text without
+        // whitespace is wrapped (causing the first line near the legend number to be blank).
+        if (tspan.node().getComputedTextLength() > config.legend_column_width && position !== 1) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [words[position]];
+
+          tspan = textElement.append("tspan")
+              .attr("x", numberWidth)
+              .attr("dy", config.legend_line_height)
+              .text(words[position]);
+        }
+      }
+
+      const textBoundingBox = textElement.node().getBBox();
+      heightForNextElement = textBoundingBox.y + textBoundingBox.height;
+    });
+  }
+
+  // layer for entries
+  var rink = radar.append("g")
+    .attr("id", "rink");
+
+  // rollover bubble (on top of everything else)
+  var bubble = radar.append("g")
+    .attr("id", "bubble")
+    .attr("x", 0)
+    .attr("y", 0)
+    .style("opacity", 0)
+    .style("pointer-events", "none")
+    .style("user-select", "none");
+  bubble.append("rect")
+    .attr("rx", 4)
+    .attr("ry", 4)
+    .style("fill", "#333");
+  bubble.append("text")
+    .style("font-family", config.font_family)
+    .style("font-size", "10px")
+    .style("fill", "#fff");
+  bubble.append("path")
+    .attr("d", "M 0,0 10,0 5,8 z")
+    .style("fill", "#333");
+
+  function showBubble(d) {
+    if (d.active || config.print_layout) {
+      var tooltip = d3.select("#bubble text")
+        .text(d.label);
+      var bbox = tooltip.node().getBBox();
+      d3.select("#bubble")
+        .attr("transform", translate(d.x - bbox.width / 2, d.y - 16))
+        .style("opacity", 0.8);
+      d3.select("#bubble rect")
+        .attr("x", -5)
+        .attr("y", -bbox.height)
+        .attr("width", bbox.width + 10)
+        .attr("height", bbox.height + 4);
+      d3.select("#bubble path")
+        .attr("transform", translate(bbox.width / 2 - 5, 3));
+    }
+  }
+
+  function hideBubble(d) {
+    var bubble = d3.select("#bubble")
+      .attr("transform", translate(0,0))
+      .style("opacity", 0);
+  }
+
+  function highlightLegendItem(d) {
+    var legendItem = document.getElementById("legendItem" + d.id);
+    legendItem.setAttribute("filter", "url(#solid)");
+    legendItem.setAttribute("fill", "white");
+  }
+
+  function unhighlightLegendItem(d) {
+    var legendItem = document.getElementById("legendItem" + d.id);
+    legendItem.removeAttribute("filter");
+    legendItem.removeAttribute("fill");
+  }
+
+  // draw blips on radar
+  var blips = rink.selectAll(".blip")
+    .data(config.entries)
+    .enter()
+      .append("g")
+        .attr("class", "blip")
+        .attr("transform", function(d, i) { return legend_transform(d.quadrant, d.ring, config.legend_column_width, i); })
+        .on("mouseover", function(event, d) { showBubble(d); highlightLegendItem(d); })
+        .on("mouseout", function(event, d) { hideBubble(d); unhighlightLegendItem(d); });
+
+  // configure each blip
+  blips.each(function(d) {
+    var blip = d3.select(this);
+
+    // blip link
+    if (d.active && Object.prototype.hasOwnProperty.call(d, "link") && d.link) {
+      blip = blip.append("a")
+        .attr("xlink:href", d.link);
+
+      if (config.links_in_new_tabs) {
+        blip.attr("target", "_blank");
+      }
+    }
+
+    // blip shape
+    if (d.moved == 1) {
+      blip.append("path")
+        .attr("d", "M -11,5 11,5 0,-13 z") // triangle pointing up
+        .style("fill", d.color);
+    } else if (d.moved == -1) {
+      blip.append("path")
+        .attr("d", "M -11,-5 11,-5 0,13 z") // triangle pointing down
+        .style("fill", d.color);
+    } else if (d.moved == 2) {
+      blip.append("path")
+        .attr("d", d3.symbol().type(d3.symbolStar).size(200))
+        .style("fill", d.color);
+    } else {
+      blip.append("circle")
+        .attr("r", 9)
+        .attr("fill", d.color);
+    }
+
+    // blip text
+    if (d.active || config.print_layout) {
+      var blip_text = config.print_layout ? d.id : d.label.match(/[a-z]/i);
+      blip.append("text")
+        .text(blip_text)
+        .attr("y", 3)
+        .attr("text-anchor", "middle")
+        .style("fill", "#fff")
+        .style("font-family", config.font_family)
+        .style("font-size", function(d) { return blip_text.length > 2 ? "8px" : "9px"; })
+        .style("pointer-events", "none")
+        .style("user-select", "none");
+    }
+  });
+
+  // make sure that blips stay inside their segment
+  function ticked() {
+    blips.attr("transform", function(d) {
+      return translate(d.segment.clipx(d), d.segment.clipy(d));
+    })
+  }
+
+  // distribute blips, while avoiding collisions
+  d3.forceSimulation()
+    .nodes(config.entries)
+    .velocityDecay(0.19) // magic number (found by experimentation)
+    .force("collision", d3.forceCollide().radius(12).strength(0.85))
+    .on("tick", ticked);
+
+  function ringDescriptionsTable() {
+    var table = d3.select("body").append("table")
+      .attr("class", "radar-table")
+      .style("border-collapse", "collapse")
+      .style("position", "relative")
+      .style("top", "-70px")  // Adjust this value to move the table closer vertically
+      .style("margin-left", "50px")
+      .style("margin-right", "50px")
+      .style("font-family", config.font_family)
+      .style("font-size", "13px")
+      .style("text-align", "left");
+
+    var thead = table.append("thead");
+    var tbody = table.append("tbody");
+
+    // define fixed width for each column
+    var columnWidth = `${100 / config.rings.length}%`;
+
+    // create table header row with ring names
+    var headerRow = thead.append("tr")
+      .style("border", "1px solid #ddd");
+
+    headerRow.selectAll("th")
+      .data(config.rings)
+      .enter()
+      .append("th")
+      .style("padding", "8px")
+      .style("border", "1px solid #ddd")
+      .style("background-color", d => d.color)
+      .style("color", "#fff")
+      .style("width", columnWidth)
+      .text(d => d.name);
+
+    // create table body row with descriptions
+    var descriptionRow = tbody.append("tr")
+      .style("border", "1px solid #ddd");
+
+    descriptionRow.selectAll("td")
+      .data(config.rings)
+      .enter()
+      .append("td")
+      .style("padding", "8px")
+      .style("border", "1px solid #ddd")
+      .style("width", columnWidth)
+      .text(d => d.description);
+  }
+
+  if (config.print_ring_descriptions_table) {
+    ringDescriptionsTable();
+  }
+}
+
+</script>
+<script>
+radar_visualization({
+  svg_id: "radar",
+  width: 1450,
+  height: 1000,
+  colors: {
+    background: "#fff",
+    grid: "#dddde0",
+    inactive: "#ddd"
+  },
+  title: "AI Technology Radar",
+  date: "2026-02-25",
+  quadrants: [
+    { name: "Tools" },
+    { name: "Platforms" },
+    { name: "Languages & Frameworks" },
+    { name: "Techniques" }
+  ],
+  rings: [
+    { name: "Adopt", color: "#5ba300" },
+    { name: "Trial", color: "#009eb0" },
+    { name: "Assess", color: "#c7ba00" },
+    { name: "Hold", color: "#e09b96" }
+  ],
+  print_layout: true,
+  links_in_new_tabs: true,
+  entries: [{"label":"A2A (Agent-to-Agent Protocol)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://google.github.io/A2A/","description":"Google-led open protocol complementing MCP that enables agents built\nby different vendors to discover and communicate with each other.\nStill early but has significant interoperability potential for\nmulti-agent systems.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Agentic Coding","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.anthropic.com/engineering/claude-code-best-practices","description":"Using AI agents (Claude Code, Cursor, Cline) as autonomous coding\npartners that read codebases, edit files, run commands, and iterate.\nMoving beyond autocomplete to full task execution within development\nworkflows.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Agents","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Intelligent_agent","description":"AI agents are autonomous systems that use LLMs to reason, plan, and\nexecute multi-step tasks with tool access.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"AI Code Review","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.qodo.ai/blog/ai-code-review/","description":"Automated AI-powered code review integrated into pull request\nworkflows. Tools like CodeRabbit and Qodo provide contextual inline\ncomments, bug detection, and cross-repository impact analysis.\nComplements agentic coding by providing an automated quality gate.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"BMAD","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://docs.bmad-method.org/tutorials/getting-started/","description":"BMAD (Breakthrough Method for Agile AI-Driven Development) is a\nframework that guides software teams through planning, architecture,\nand implementation using specialized AI agents. It organizes work\ninto defined phases—analysis, planning, solutioning, and\nimplementation—to streamline AI-assisted software delivery.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Constrained Decoding","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://blog.vllm.ai/2025/01/14/struct-decode-intro.html","description":"Token-level enforcement of output schemas (JSON Schema, regex,\ngrammars) through FSM-guided generation and grammar-based masking.\nGuarantees 100% structural compliance versus best-effort prompting.\nNow integrated into vLLM, OpenAI, and other serving engines.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Context Engineering","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.promptingguide.ai/guides/context-engineering-guide","description":"The systematic management of everything fed into a model — user\nmetadata, conversation history, data schemas, tool definitions,\nmemory, and caching strategies. The evolution beyond basic prompt\nengineering for building reliable LLM applications.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"DPO (Direct Preference Optimization)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://arxiv.org/abs/2305.18290","description":"A simpler alternative to RLHF that sidesteps reward model training\nby deriving a closed-form solution to the preference optimization\nobjective. More stable and often matches RLHF performance with\nsignificantly less infrastructure complexity.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Evals","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"https://newsletter.pragmaticengineer.com/p/evals","description":"Evals driven development is the concept of putting data at the\nforefront of LLM based systems, whithout which no development\nshould happen.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"GRPO (Group Relative Policy Optimization)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://arxiv.org/abs/2501.12948","description":"The RL algorithm behind DeepSeek-R1's reasoning capabilities.\nEliminates both the reward model and critic from the RLHF pipeline,\ncutting compute requirements roughly in half versus PPO. Incentivizes\nemergent reasoning behaviors like self-reflection and verification.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Knowledge Distillation","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.ibm.com/think/topics/knowledge-distillation","description":"Training a smaller student model to replicate a larger teacher\nmodel's capabilities, enabling faster, cheaper production\ndeployments. Increasingly practical with LoRA/QLoRA for\nparameter-efficient transfer.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"LLM-as-Judge","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"","description":"Using large language models to evaluate and score the outputs of\nother LLMs, enabling scalable and automated quality assessment of\nAI-generated content.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"LLM Guardrails","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/NVIDIA/NeMo-Guardrails","description":"Runtime input/output filtering for LLM applications including prompt\ninjection detection, PII redaction, and topic control. Frameworks\nlike NeMo Guardrails and Guardrails AI are maturing, making this\nessential for production AI systems.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"LoRA / QLoRA Fine-Tuning","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://huggingface.co/docs/peft/main/en/conceptual_guides/lora","description":"LoRA reduces trainable parameters by ~99%, enabling fine-tuning of\nlarge models on a single GPU. QLoRA extends this with 4-bit\nquantization. The dominant approach for teams needing domain\nadaptation beyond what RAG and prompting alone can achieve.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"MCP (Model Context Protocol)","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://modelcontextprotocol.io/","description":"Open protocol originally by Anthropic (now under Linux Foundation)\nthat standardizes how LLMs connect to external tools and data\nsources. Adopted by OpenAI, Google, and major toolmakers, it is\nbecoming the de facto integration standard for LLM applications.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Prompt Caching","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"https://www.anthropic.com/news/prompt-caching","description":"Reusing KV tensors across API requests when prompts share common\nprefixes, natively supported by Anthropic, OpenAI, and Google.\nDelivers 50-90% cost reduction and major latency improvements with\nminimal code changes.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"RAG","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation","description":"Retrieval-Augmented Generation combines LLM capabilities with external\nknowledge retrieval to produce more accurate, grounded responses.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Spec-driven AI dev","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.thoughtworks.com/radar","description":"Using structured specifications to guide AI-assisted software\ndevelopment, ensuring consistent and predictable outputs.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Structured Output","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"","description":"Constraining LLM responses to follow a specific schema or format,\nensuring reliable and parseable output for programmatic consumption.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"Synthetic Data Generation","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.confident-ai.com/blog/the-definitive-guide-to-synthetic-data-generation-using-llms","description":"Using LLMs to generate training, evaluation, and fine-tuning\ndatasets through distillation from larger models or self-improvement\nloops. Critical for building domain-specific models or comprehensive\neval suites where real data is scarce or expensive to label.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Test-Time Compute","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://huggingface.co/learn/llm-course/en/chapter12/3","description":"Allocating additional computation at inference time to improve\nresponse quality through extended chain-of-thought reasoning.\nPopularized by OpenAI's o-series and DeepSeek-R1, representing a\nfundamental shift in the cost/quality tradeoff.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Tool Calling","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"","description":"Enabling LLMs to invoke external tools and APIs, allowing them to\nperform actions and retrieve real-time information beyond their\ntraining data.\nTool calling is a key method to increase LLM's awareness. Be mindful of how many tools\nfit in your LLM's context window. You'll possibly be fine up to ~20 tools but this \napproach by itself will very likely break down once you reach 40-50 tools.\nThere are [workarounds](https://medium.com/zar-engineering/code-mode-mcp-ac17c2a1038b) or you need specialised agents.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Arize Phoenix","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://phoenix.arize.com/","description":"Open-source AI observability platform that accepts traces via\nstandard OTLP protocol. Provides tracing, evaluation, datasets,\nexperiments, and prompt management. Self-hosted with full data\ncontrol for strict data-residency requirements.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Braintrust","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.braintrust.dev/","description":"An enterprise AI evaluation platform for testing, scoring, and\nimproving LLM-based applications with systematic experimentation.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Chroma","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.trychroma.com/","description":"Developer-friendly, lightweight, open-source vector database\nexcellent for prototyping and small/medium RAG applications. Easy to\nembed directly in Python applications. For teams already on\nPostgreSQL, pgvector offers similar ease of use with the added\nbenefit of keeping data in a single database.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Claude Code","quadrant":0,"ring":0,"moved":0,"active":true,"link":"","url":"https://docs.anthropic.com/en/docs/claude-code","description":"Anthropic's terminal-based agentic coding tool with a 200K context window, \nmulti-agent sub-tasks, and deep codebase understanding. \nLeading the shift from code suggestions to autonomous coding.\nThis is the leading coding tool and we recommend its adoption for software \nengineering and more.\n","quadrantName":"Tools","ringName":"Adopt"},{"label":"CodeRabbit","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://coderabbit.ai/","description":"AI-assisted pull request reviewer that runs inside GitHub/GitLab,\nproviding automated PR summaries, inline code comments, and suggested\nfixes. Complements agentic coding by providing an automated quality\ngate before merging.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Cursor","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.cursor.com/","description":"VS Code fork rebuilt around AI with agent mode, multi-file editing,\nand enterprise readiness (SOC 2, SSO). Widely adopted for AI-assisted\ndevelopment across organizations of all sizes.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Entire.io","quadrant":0,"ring":3,"moved":0,"active":true,"link":"","url":"https://entire.io/","description":"While helpful, Entire.io generates a lot of data and it's not clear\nhow useful that is, as long as one follows software engineering best\npractices, like committing frequently.\n","quadrantName":"Tools","ringName":"Hold"},{"label":"Groq","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://groq.com/","description":"Purpose-built Language Processing Unit (LPU) hardware delivering\nultra-fast inference with up to 18x faster processing than\ntraditional GPUs. Extremely low time-to-first-token for\nlatency-critical applications with an OpenAI-compatible API.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Helicone","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.helicone.ai/","description":"Open-source AI gateway and observability platform built in Rust.\nRoutes, caches, load-balances, and logs requests across 100+ LLM\nproviders with minimal latency overhead. Semantic caching can reduce\ncosts by up to 95%.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Hyperterse","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://hyperterse.com/","description":"Open-source framework for building MCP tool servers from declaration\nfiles. Collapses all tools behind search and execute so AI agents\ndynamically discover what they need. Includes authentication,\ncaching, and OpenTelemetry observability out of the box.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Langfuse","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://langfuse.com/","description":"An open-source LLM engineering platform for observability, analytics,\nprompt management, and evaluation of AI applications.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"LangSmith","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/langsmith","description":"A platform for debugging, testing, evaluating, and monitoring LLM\napplications built on any framework.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"LiteLLM","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.litellm.ai/","description":"A unified API interface for calling 100+ LLM providers, \nsimplifying multi-model integration and cost management. \n\nLitellm is an acceptable way for your solution to be provider and model agnostic. \nHowever, its code is full of technical debt and the pathways for each provider or model\nhave flaws and bugs. Consider whether you really need to be provider agnostic or if \nyou only need to support a couple of key providers through custom code.\"\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Ollama","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://ollama.com/","description":"Docker-style Go binary that makes running local LLMs trivially easy.\nExcellent for developer experimentation, local testing, and rapid\nprototyping with an OpenAI-compatible API.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"OpenClaw","quadrant":0,"ring":3,"moved":0,"active":true,"link":"","url":"https://openclaw.ai/","description":"OpenClaw is an open-source AI agent that runs locally and can execute\nshell commands, manage files, and automate browser tasks. However, it\nlacks a strong security model out of the box—agents can escalate\nactions beyond user intent (e.g. deleting data without confirmation),\nand granting broad system permissions to an LLM-driven tool creates a\nsignificant attack surface for data leaks and uncontrolled\nautomation.\n","quadrantName":"Tools","ringName":"Hold"},{"label":"Pinecone","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.pinecone.io/","description":"Managed serverless vector database with exceptional query speed and\nmulti-region performance. Minimal operational overhead makes it the\nleading choice for production-grade vector search without managing\ninfrastructure. Teams already running PostgreSQL should consider\npgvector + pgvectorscale as a strong alternative that benchmarks\ncompetitively at significantly lower cost.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Portkey","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://portkey.ai/","description":"AI gateway for routing requests across 1600+ LLMs with built-in\nobservability, guardrails, fallbacks, and cost governance. Named a\nGartner Cool Vendor 2025 in LLM Observability.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Qdrant","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://qdrant.tech/","description":"Open-source vector database written in Rust, emphasizing high\nperformance, compact memory footprint, and powerful metadata\nfiltering. Offers both self-hosted and managed cloud options with\nACID-compliant transactions. PostgreSQL with pgvector is a strong\nalternative for teams that prefer consolidating vector search into\ntheir existing database rather than running separate infrastructure.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Qodo","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.qodo.ai/","description":"AI code assistant with a multi-repo context engine that understands\ndependency graphs and flags cross-service breaking changes. Offers\n15+ agentic workflows for reviews, test generation, and\ndocumentation.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"RAGAS","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.ragas.io/","description":"RAGAS is a framework for evaluating Retrieval-Augmented Generation\npipelines, providing metrics for faithfulness, relevance, and\ncorrectness.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"vLLM","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/vllm-project/vllm","description":"High-throughput, memory-efficient open-source inference engine\ndelivering 35x+ request throughput over alternatives. Supports\nomni-modality serving. The go-to engine for teams self-hosting LLMs\nin production at scale.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Claude Agent SDK","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk","description":"Anthropic's SDK for building custom AI agents powered by Claude, with\nbuilt-in tool use, memory, and orchestration capabilities.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"CrewAI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.crewai.com/","description":"Multi-agent orchestration framework where you define agents with roles \nand goals that collaborate on tasks. Provides an intuitive abstraction \nfor teams thinking in terms of roles and responsibilities.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"DSPy","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://dspy-docs.vercel.app/","description":"A framework for programming with foundation models through\ndeclarative language model calls, automatic prompt optimization, and\nfine-tuning.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Google ADK (Agent Development Kit)","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://google.github.io/adk-docs/","description":"Open-source agent framework from Google, model-agnostic and\ndeployment-agnostic despite being optimized for Gemini/GCP. Features\nbuilt-in bidirectional audio/video streaming for human-like agent\nconversations.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Haystack","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://haystack.deepset.ai/","description":"Pipeline-first framework from deepset focused on production-grade\nsearch and RAG systems. Excels at complex document processing\nworkflows with strong enterprise search backend support\n(Elasticsearch, OpenSearch).\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Instructor","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://python.useinstructor.com/","description":"The most popular library for extracting structured, validated data\nfrom LLMs. Built on Pydantic with automatic retries, streaming, and\ntype-safe extraction. Supports 15+ providers across Python,\nTypeScript, Go, Ruby, Elixir, and Rust.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"LangChain","quadrant":2,"ring":3,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/","description":"A popular framework for developing applications powered by language\nmodels, providing chains, agents, and retrieval components.\nAlthough it's level of abstraction is good, it has frequently shown to \nmake the code  for even smaller projects too complicated to maintain \ncompared to the value it adds.\n","quadrantName":"Languages & Frameworks","ringName":"Hold"},{"label":"LangGraph","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/langgraph","description":"Graph-based agent orchestration from LangChain that represents agent\nworkflows as state machines with explicit control flow. Strong fit\nfor enterprise use cases requiring deterministic behavior.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"LlamaIndex","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.llamaindex.ai/","description":"The leading RAG-first framework with the most extensive data\nconnector ecosystem. Has evolved from a document processing tool to a\nfull agent framework while maintaining its core strength in data\nintegration and retrieval.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Mastra","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://mastra.ai/","description":"TypeScript framework providing building blocks for agents, tools, RAG\npipelines, workflows, memory, and orchestration. Sits above Vercel AI\nSDK in abstraction to accelerate backend agent development.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Microsoft Agent Framework","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://github.com/microsoft/agents","description":"Microsoft's framework for building, orchestrating, and managing AI\nagents with enterprise-grade tooling and Azure integration.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"OpenAI Agents SDK","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://openai.github.io/openai-agents-python/","description":"Production-ready agent framework with minimal abstractions (Agents,\nHandoffs, Guardrails) and built-in tracing. Provider-agnostic\ndespite the name, it is the successor to Swarm.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Outlines","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://github.com/dottxt-ai/outlines","description":"Pioneered the FSM approach to constrained decoding, compiling JSON\nSchemas and regex patterns into finite-state machines with\nprecomputed vocabulary indexes. Useful for teams running self-hosted\nmodels who need guaranteed output compliance.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"PydanticAI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://ai.pydantic.dev/","description":"Type-safe agent framework with structured I/O and MCP support. A\ngood fit for teams that value parameter correctness and Python typing\nin their AI applications.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Semantic Kernel","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://learn.microsoft.com/en-us/semantic-kernel/overview/","description":"Microsoft's lightweight SDK for integrating AI into existing\napplications, available in .NET, Python, and Java. Being merged with\nAutoGen into the unified Microsoft Agent Framework. Strong choice for\nteams with existing Microsoft technology investments.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Spring AI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://spring.io/projects/spring-ai","description":"Spring's official AI framework, GA since May 2025. Brings Spring's\nabstraction philosophy to LLM integration — write code once, switch\nproviders via configuration. Supports all major AI providers, vector\ndatabases, Tool Calling, RAG, MCP, and structured output.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Vercel AI SDK","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://ai-sdk.dev/","description":"Streaming-first, provider-agnostic TypeScript SDK for building\nLLM-powered web applications. Features first-class agent\nabstractions, tool approval workflows, full MCP support, and deep\nReact/Next.js integration.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Amazon Bedrock","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://aws.amazon.com/bedrock/","description":"AWS's managed foundation model platform providing access to models\nfrom Anthropic, Meta, Mistral, and others without managing\ninfrastructure. Includes AgentCore for enterprise-grade agent systems\nwith access management, observability, and security controls.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Databricks","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.databricks.com/","description":"Unified data + AI platform with deep MLflow integration, Unity\nCatalog for AI asset governance, and Mosaic AI for model serving.\nStrong choice for organizations already invested in the Databricks\nlakehouse.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Graph databases","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Graph_database","description":"Database systems optimized for storing and querying graph-structured\ndata, increasingly used for knowledge graphs in AI applications.\nPostgreSQL with the Apache AGE extension supports openCypher queries\nand hybrid SQL + graph operations, making it a viable alternative\nfor teams that don't need the full graph algorithm ecosystem of\ndedicated solutions like Neo4j.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Hugging Face","quadrant":1,"ring":0,"moved":0,"active":true,"link":"","url":"https://huggingface.co/","description":"The cornerstone of the open-source AI ecosystem, hosting 2M+ models,\n500K+ datasets, and 1M+ Spaces. Provides production tools (TGI, TEI,\nInference Endpoints) alongside the Transformers library. The GitHub\nof ML.\n","quadrantName":"Platforms","ringName":"Adopt"},{"label":"MLflow","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://mlflow.org/","description":"The most widely adopted open-source MLOps platform. MLflow 3.0 adds\nproduction-scale GenAI tracing, LLM evaluation, feedback collection,\nand prompt/application version tracking. Usable standalone or deeply\nintegrated with Databricks.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Modal","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://modal.com/","description":"Serverless cloud platform for AI/GPU workloads with a Python-native\nSDK. Sub-second cold starts, instant autoscaling, and a developer\nexperience that feels local. Eliminates infrastructure management for\ninference, training, and batch processing.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Neo4j","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://neo4j.com/","description":"The leading graph database, widely adopted for knowledge graphs and\nGraphRAG implementations. Cypher's readable query language and a\nrich algorithm library (PageRank, community detection, shortest\npath) make it the go-to for complex graph analytics. Recent releases\nadd native vector search with metadata filtering and AI-native\nCypher procedures, enabling hybrid vector + graph traversal in a\nsingle query. Best suited for teams with dedicated graph workloads\nthat justify separate infrastructure — teams already on PostgreSQL\nshould evaluate Apache AGE as a lighter-weight alternative.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Opik","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.comet.com/site/products/opik/","description":"Open-source LLM evaluation and observability platform covering the\nfull development lifecycle from experimentation to production\nmonitoring. An alternative to commercial observability tools.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"PostgreSQL (pgvector + AGE)","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/pgvector/pgvector","description":"PostgreSQL has become a compelling multi-model database for AI\nworkloads. **pgvector** adds native vector similarity search with\nHNSW and IVFFlat indexes, supporting up to 16,000 dimensions with\nL2, cosine, and inner product distance functions. The companion\n**pgvectorscale** extension (by Timescale) adds DiskANN-based\nindexing that benchmarks at 28x lower p95 latency than Pinecone at\n75% less cost on 50M vectors.\n\nFor graph workloads, **Apache AGE** brings openCypher query support,\nenabling hybrid SQL + Cypher queries with full ACID guarantees.\n\nThe key advantage is operational simplicity: one database for\nrelational, vector, and graph data — no sync pipelines, no\nadditional infrastructure, and access to PostgreSQL's mature\necosystem of replication, monitoring, and managed cloud services\n(RDS, Cloud SQL, Azure). A strong alternative to dedicated vector\nand graph databases for teams already running PostgreSQL.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Replicate","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://replicate.com/","description":"Serverless GPU platform that simplifies model deployment via\nDockerized environments. The fastest way to deploy and test community\nmodels — great for prototyping, demos, and running niche text, image,\nvideo, and audio models.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Together AI","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.together.ai/","description":"Fast serverless API for 200+ open-source models (DeepSeek, Llama,\nQwen, Mistral) with OpenAI-compatible endpoints. Inference stack is\n4x faster than standard vLLM. Also offers fine-tuning and dedicated\nendpoints.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Weights & Biases","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://wandb.ai/","description":"AI developer platform for experiment tracking, model management, and\nGenAI observability through W&B Weave. Weave provides tracing,\nevaluation, and debugging specifically for LLM-powered applications.\nThe standard for ML experiment tracking.\n","quadrantName":"Platforms","ringName":"Trial"}]
+});
+</script>
 <script>
 (function() {
-  var blips = [{"index":1,"name":"Agents","description":"AI agents are autonomous systems that use LLMs to reason, plan, and execute multi-step tasks with tool access.","url":"https://en.wikipedia.org/wiki/Intelligent_agent","quadrant":"Techniques","ring":"Trial","x":454.9054215351532,"y":286.9999118547746},{"index":2,"name":"Braintrust","description":"An enterprise AI evaluation platform for testing, scoring, and improving LLM-based applications with systematic experimentation.","url":"https://www.braintrust.dev/","quadrant":"Tools","ring":"Trial","x":424.3160758470581,"y":510.54479998020975},{"index":3,"name":"Claude Agent SDK","description":"Anthropic's SDK for building custom AI agents powered by Claude, with built-in tool use, memory, and orchestration capabilities.","url":"https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk","quadrant":"Languages & Frameworks","ring":"Trial","x":286.80740443010563,"y":291.6668505014818},{"index":4,"name":"DSPy","description":"A framework for programming with foundation models through declarative language model calls, automatic prompt optimization, and fine-tuning.","url":"https://dspy-docs.vercel.app/","quadrant":"Languages & Frameworks","ring":"Trial","x":307.4704066130005,"y":315.01823970746364},{"index":5,"name":"Entire.io","description":"While helpful, Entire.io generates a lot of data and it's not clear how useful that is, as long as one follows software engineering best practices, like committing frequently.","url":"https://entire.io/","quadrant":"Tools","ring":"Hold","x":657.510384959188,"y":487.5000095260215},{"index":6,"name":"Evals","description":"Evals driven development is the concept of putting data at the forefront of LLM based systems, whithout which no development should happen.","url":"https://newsletter.pragmaticengineer.com/p/evals","quadrant":"Techniques","ring":"Adopt","x":445.4476851955884,"y":370.7697260828586},{"index":7,"name":"Graph databases","description":"Database systems optimized for storing and querying graph-structured data, increasingly used for knowledge graphs in AI applications.","url":"https://en.wikipedia.org/wiki/Graph_database","quadrant":"Platforms","ring":"Assess","x":221.70669971190136,"y":479.49166519506724},{"index":8,"name":"LangChain","description":"A popular framework for developing applications powered by language models, providing chains, agents, and retrieval components.","url":"https://www.langchain.com/","quadrant":"Languages & Frameworks","ring":"Assess","x":282.870430466636,"y":233.36530499900996},{"index":9,"name":"Langfuse","description":"An open-source LLM engineering platform for observability, analytics, prompt management, and evaluation of AI applications.","url":"https://langfuse.com/","quadrant":"Tools","ring":"Trial","x":481.90231527091294,"y":536.202083386734},{"index":10,"name":"LangSmith","description":"A platform for debugging, testing, evaluating, and monitoring LLM applications built on any framework.","url":"https://www.langchain.com/langsmith","quadrant":"Tools","ring":"Trial","x":521.8901461846194,"y":432.2965374153496},{"index":11,"name":"LiteLLM","description":"A unified API interface for calling 100+ LLM providers, \nsimplifying multi-model integration and cost management. \n\nLitellm is an acceptable way for your solution to be provider and model agnostic. \nHowever, its code is full of technical debt and the pathways for each provider or model\nhave flaws and bugs. Consider whether you really need to be provider agnostic or if \nyou only need to support a couple of key providers through custom code.\"\n","url":"https://docs.litellm.ai/","quadrant":"Tools","ring":"Trial","x":525.5651038498847,"y":422.4295619970595},{"index":12,"name":"LLM-as-Judge","description":"Using large language models to evaluate and score the outputs of other LLMs, enabling scalable and automated quality assessment of AI-generated content.","quadrant":"Techniques","ring":"Adopt","x":431.8616372934023,"y":349.400353016796},{"index":13,"name":"Microsoft Agent Framework","description":"Microsoft's framework for building, orchestrating, and managing AI agents with enterprise-grade tooling and Azure integration.","url":"https://github.com/microsoft/agents","quadrant":"Languages & Frameworks","ring":"Assess","x":214.76245766224366,"y":338.75248089938157},{"index":14,"name":"RAG","description":"Retrieval-Augmented Generation combines LLM capabilities with external knowledge retrieval to produce more accurate, grounded responses.","url":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation","quadrant":"Techniques","ring":"Trial","x":504.6082863993764,"y":298.4998093417163},{"index":15,"name":"RAGAS","description":"RAGAS is a framework for evaluating Retrieval-Augmented Generation pipelines, providing metrics for faithfulness, relevance, and correctness.","url":"https://docs.ragas.io/","quadrant":"Tools","ring":"Trial","x":540.989541125065,"y":456.0306581087887},{"index":16,"name":"Spec-driven AI dev","description":"Using structured specifications to guide AI-assisted software development, ensuring consistent and predictable outputs.","url":"https://www.thoughtworks.com/radar","quadrant":"Techniques","ring":"Assess","x":597.3891184230397,"y":361.94142023336684},{"index":17,"name":"Structured Output","description":"Constraining LLM responses to follow a specific schema or format, ensuring reliable and parseable output for programmatic consumption.","quadrant":"Techniques","ring":"Adopt","x":415.449689050158,"y":371.08197016056243},{"index":18,"name":"Tool Calling","description":"Enabling LLMs to invoke external tools and APIs, allowing them to perform actions and retrieve real-time information beyond their training data.","quadrant":"Techniques","ring":"Adopt","x":404.9019227572572,"y":378.5571774295092}];
-  var deprecated = [{"name":"Apache Airflow","description":"A workflow orchestration platform for data pipelines. Deprecated in favor of more modern alternatives.","url":"https://airflow.apache.org/"}];
-  var tooltip = document.getElementById('tooltip');
+  var deprecated = [{"name":"Apache Airflow","description":"A workflow orchestration platform for data pipelines. Deprecated in\nfavor of more modern alternatives.\n","url":"https://airflow.apache.org/"}];
+  var tooltip = document.getElementById('dep-tooltip');
   var ttName = tooltip.querySelector('.tt-name');
   var ttRing = tooltip.querySelector('.tt-ring');
   var ttDesc = tooltip.querySelector('.tt-desc');
 
-  function attachBlipListeners(el, blip) {
+  function attachDeprecatedListeners(el, entry) {
     el.addEventListener('mouseenter', function(e) {
-      ttName.textContent = blip.name;
-      ttRing.textContent = blip.ring ? blip.quadrant + ' / ' + blip.ring : blip.quadrant;
-      ttDesc.textContent = blip.description;
+      ttName.textContent = entry.name;
+      ttRing.textContent = 'Deprecated';
+      ttDesc.textContent = entry.description;
       tooltip.style.display = 'block';
     });
-
     el.addEventListener('mousemove', function(e) {
       var tx = e.clientX + 16;
       var ty = e.clientY + 16;
@@ -164,35 +734,116 @@
       tooltip.style.left = tx + 'px';
       tooltip.style.top = ty + 'px';
     });
-
     el.addEventListener('mouseleave', function() {
       tooltip.style.display = 'none';
     });
-
     el.addEventListener('click', function() {
-      if (blip.url) window.open(blip.url, '_blank');
+      if (entry.url) window.open(entry.url, '_blank');
     });
   }
-
-  document.querySelectorAll('.blip').forEach(function(el) {
-    var idx = parseInt(el.getAttribute('data-index'));
-    var blip = blips.find(function(b) { return b.index === idx; });
-    if (!blip) return;
-    attachBlipListeners(el, blip);
-  });
-
-  document.querySelectorAll('.legend-quadrant li[data-index]').forEach(function(el) {
-    var idx = parseInt(el.getAttribute('data-index'));
-    var blip = blips.find(function(b) { return b.index === idx; });
-    if (!blip) return;
-    attachBlipListeners(el, blip);
-  });
 
   document.querySelectorAll('.deprecated-item').forEach(function(el) {
     var name = el.getAttribute('data-name');
     var entry = deprecated.find(function(d) { return d.name === name; });
     if (!entry) return;
-    attachBlipListeners(el, { name: entry.name, quadrant: 'Deprecated', ring: '', description: entry.description, url: entry.url });
+    attachDeprecatedListeners(el, entry);
+  });
+})();
+</script>
+<script>
+(function() {
+  var entries = [{"label":"A2A (Agent-to-Agent Protocol)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://google.github.io/A2A/","description":"Google-led open protocol complementing MCP that enables agents built\nby different vendors to discover and communicate with each other.\nStill early but has significant interoperability potential for\nmulti-agent systems.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Agentic Coding","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.anthropic.com/engineering/claude-code-best-practices","description":"Using AI agents (Claude Code, Cursor, Cline) as autonomous coding\npartners that read codebases, edit files, run commands, and iterate.\nMoving beyond autocomplete to full task execution within development\nworkflows.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Agents","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Intelligent_agent","description":"AI agents are autonomous systems that use LLMs to reason, plan, and\nexecute multi-step tasks with tool access.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"AI Code Review","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.qodo.ai/blog/ai-code-review/","description":"Automated AI-powered code review integrated into pull request\nworkflows. Tools like CodeRabbit and Qodo provide contextual inline\ncomments, bug detection, and cross-repository impact analysis.\nComplements agentic coding by providing an automated quality gate.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"BMAD","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://docs.bmad-method.org/tutorials/getting-started/","description":"BMAD (Breakthrough Method for Agile AI-Driven Development) is a\nframework that guides software teams through planning, architecture,\nand implementation using specialized AI agents. It organizes work\ninto defined phases—analysis, planning, solutioning, and\nimplementation—to streamline AI-assisted software delivery.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Constrained Decoding","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://blog.vllm.ai/2025/01/14/struct-decode-intro.html","description":"Token-level enforcement of output schemas (JSON Schema, regex,\ngrammars) through FSM-guided generation and grammar-based masking.\nGuarantees 100% structural compliance versus best-effort prompting.\nNow integrated into vLLM, OpenAI, and other serving engines.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Context Engineering","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.promptingguide.ai/guides/context-engineering-guide","description":"The systematic management of everything fed into a model — user\nmetadata, conversation history, data schemas, tool definitions,\nmemory, and caching strategies. The evolution beyond basic prompt\nengineering for building reliable LLM applications.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"DPO (Direct Preference Optimization)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://arxiv.org/abs/2305.18290","description":"A simpler alternative to RLHF that sidesteps reward model training\nby deriving a closed-form solution to the preference optimization\nobjective. More stable and often matches RLHF performance with\nsignificantly less infrastructure complexity.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Evals","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"https://newsletter.pragmaticengineer.com/p/evals","description":"Evals driven development is the concept of putting data at the\nforefront of LLM based systems, whithout which no development\nshould happen.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"GRPO (Group Relative Policy Optimization)","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://arxiv.org/abs/2501.12948","description":"The RL algorithm behind DeepSeek-R1's reasoning capabilities.\nEliminates both the reward model and critic from the RLHF pipeline,\ncutting compute requirements roughly in half versus PPO. Incentivizes\nemergent reasoning behaviors like self-reflection and verification.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Knowledge Distillation","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.ibm.com/think/topics/knowledge-distillation","description":"Training a smaller student model to replicate a larger teacher\nmodel's capabilities, enabling faster, cheaper production\ndeployments. Increasingly practical with LoRA/QLoRA for\nparameter-efficient transfer.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"LLM-as-Judge","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"","description":"Using large language models to evaluate and score the outputs of\nother LLMs, enabling scalable and automated quality assessment of\nAI-generated content.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"LLM Guardrails","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/NVIDIA/NeMo-Guardrails","description":"Runtime input/output filtering for LLM applications including prompt\ninjection detection, PII redaction, and topic control. Frameworks\nlike NeMo Guardrails and Guardrails AI are maturing, making this\nessential for production AI systems.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"LoRA / QLoRA Fine-Tuning","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://huggingface.co/docs/peft/main/en/conceptual_guides/lora","description":"LoRA reduces trainable parameters by ~99%, enabling fine-tuning of\nlarge models on a single GPU. QLoRA extends this with 4-bit\nquantization. The dominant approach for teams needing domain\nadaptation beyond what RAG and prompting alone can achieve.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"MCP (Model Context Protocol)","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://modelcontextprotocol.io/","description":"Open protocol originally by Anthropic (now under Linux Foundation)\nthat standardizes how LLMs connect to external tools and data\nsources. Adopted by OpenAI, Google, and major toolmakers, it is\nbecoming the de facto integration standard for LLM applications.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Prompt Caching","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"https://www.anthropic.com/news/prompt-caching","description":"Reusing KV tensors across API requests when prompts share common\nprefixes, natively supported by Anthropic, OpenAI, and Google.\nDelivers 50-90% cost reduction and major latency improvements with\nminimal code changes.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"RAG","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation","description":"Retrieval-Augmented Generation combines LLM capabilities with external\nknowledge retrieval to produce more accurate, grounded responses.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Spec-driven AI dev","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.thoughtworks.com/radar","description":"Using structured specifications to guide AI-assisted software\ndevelopment, ensuring consistent and predictable outputs.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Structured Output","quadrant":3,"ring":0,"moved":0,"active":true,"link":"","url":"","description":"Constraining LLM responses to follow a specific schema or format,\nensuring reliable and parseable output for programmatic consumption.\n","quadrantName":"Techniques","ringName":"Adopt"},{"label":"Synthetic Data Generation","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.confident-ai.com/blog/the-definitive-guide-to-synthetic-data-generation-using-llms","description":"Using LLMs to generate training, evaluation, and fine-tuning\ndatasets through distillation from larger models or self-improvement\nloops. Critical for building domain-specific models or comprehensive\neval suites where real data is scarce or expensive to label.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Test-Time Compute","quadrant":3,"ring":2,"moved":0,"active":true,"link":"","url":"https://huggingface.co/learn/llm-course/en/chapter12/3","description":"Allocating additional computation at inference time to improve\nresponse quality through extended chain-of-thought reasoning.\nPopularized by OpenAI's o-series and DeepSeek-R1, representing a\nfundamental shift in the cost/quality tradeoff.\n","quadrantName":"Techniques","ringName":"Assess"},{"label":"Tool Calling","quadrant":3,"ring":1,"moved":0,"active":true,"link":"","url":"","description":"Enabling LLMs to invoke external tools and APIs, allowing them to\nperform actions and retrieve real-time information beyond their\ntraining data.\nTool calling is a key method to increase LLM's awareness. Be mindful of how many tools\nfit in your LLM's context window. You'll possibly be fine up to ~20 tools but this \napproach by itself will very likely break down once you reach 40-50 tools.\nThere are [workarounds](https://medium.com/zar-engineering/code-mode-mcp-ac17c2a1038b) or you need specialised agents.\n","quadrantName":"Techniques","ringName":"Trial"},{"label":"Arize Phoenix","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://phoenix.arize.com/","description":"Open-source AI observability platform that accepts traces via\nstandard OTLP protocol. Provides tracing, evaluation, datasets,\nexperiments, and prompt management. Self-hosted with full data\ncontrol for strict data-residency requirements.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Braintrust","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.braintrust.dev/","description":"An enterprise AI evaluation platform for testing, scoring, and\nimproving LLM-based applications with systematic experimentation.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Chroma","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.trychroma.com/","description":"Developer-friendly, lightweight, open-source vector database\nexcellent for prototyping and small/medium RAG applications. Easy to\nembed directly in Python applications. For teams already on\nPostgreSQL, pgvector offers similar ease of use with the added\nbenefit of keeping data in a single database.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Claude Code","quadrant":0,"ring":0,"moved":0,"active":true,"link":"","url":"https://docs.anthropic.com/en/docs/claude-code","description":"Anthropic's terminal-based agentic coding tool with a 200K context window, \nmulti-agent sub-tasks, and deep codebase understanding. \nLeading the shift from code suggestions to autonomous coding.\nThis is the leading coding tool and we recommend its adoption for software \nengineering and more.\n","quadrantName":"Tools","ringName":"Adopt"},{"label":"CodeRabbit","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://coderabbit.ai/","description":"AI-assisted pull request reviewer that runs inside GitHub/GitLab,\nproviding automated PR summaries, inline code comments, and suggested\nfixes. Complements agentic coding by providing an automated quality\ngate before merging.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Cursor","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.cursor.com/","description":"VS Code fork rebuilt around AI with agent mode, multi-file editing,\nand enterprise readiness (SOC 2, SSO). Widely adopted for AI-assisted\ndevelopment across organizations of all sizes.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Entire.io","quadrant":0,"ring":3,"moved":0,"active":true,"link":"","url":"https://entire.io/","description":"While helpful, Entire.io generates a lot of data and it's not clear\nhow useful that is, as long as one follows software engineering best\npractices, like committing frequently.\n","quadrantName":"Tools","ringName":"Hold"},{"label":"Groq","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://groq.com/","description":"Purpose-built Language Processing Unit (LPU) hardware delivering\nultra-fast inference with up to 18x faster processing than\ntraditional GPUs. Extremely low time-to-first-token for\nlatency-critical applications with an OpenAI-compatible API.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Helicone","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.helicone.ai/","description":"Open-source AI gateway and observability platform built in Rust.\nRoutes, caches, load-balances, and logs requests across 100+ LLM\nproviders with minimal latency overhead. Semantic caching can reduce\ncosts by up to 95%.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Hyperterse","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://hyperterse.com/","description":"Open-source framework for building MCP tool servers from declaration\nfiles. Collapses all tools behind search and execute so AI agents\ndynamically discover what they need. Includes authentication,\ncaching, and OpenTelemetry observability out of the box.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Langfuse","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://langfuse.com/","description":"An open-source LLM engineering platform for observability, analytics,\nprompt management, and evaluation of AI applications.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"LangSmith","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/langsmith","description":"A platform for debugging, testing, evaluating, and monitoring LLM\napplications built on any framework.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"LiteLLM","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.litellm.ai/","description":"A unified API interface for calling 100+ LLM providers, \nsimplifying multi-model integration and cost management. \n\nLitellm is an acceptable way for your solution to be provider and model agnostic. \nHowever, its code is full of technical debt and the pathways for each provider or model\nhave flaws and bugs. Consider whether you really need to be provider agnostic or if \nyou only need to support a couple of key providers through custom code.\"\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Ollama","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://ollama.com/","description":"Docker-style Go binary that makes running local LLMs trivially easy.\nExcellent for developer experimentation, local testing, and rapid\nprototyping with an OpenAI-compatible API.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"OpenClaw","quadrant":0,"ring":3,"moved":0,"active":true,"link":"","url":"https://openclaw.ai/","description":"OpenClaw is an open-source AI agent that runs locally and can execute\nshell commands, manage files, and automate browser tasks. However, it\nlacks a strong security model out of the box—agents can escalate\nactions beyond user intent (e.g. deleting data without confirmation),\nand granting broad system permissions to an LLM-driven tool creates a\nsignificant attack surface for data leaks and uncontrolled\nautomation.\n","quadrantName":"Tools","ringName":"Hold"},{"label":"Pinecone","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.pinecone.io/","description":"Managed serverless vector database with exceptional query speed and\nmulti-region performance. Minimal operational overhead makes it the\nleading choice for production-grade vector search without managing\ninfrastructure. Teams already running PostgreSQL should consider\npgvector + pgvectorscale as a strong alternative that benchmarks\ncompetitively at significantly lower cost.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Portkey","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://portkey.ai/","description":"AI gateway for routing requests across 1600+ LLMs with built-in\nobservability, guardrails, fallbacks, and cost governance. Named a\nGartner Cool Vendor 2025 in LLM Observability.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"Qdrant","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://qdrant.tech/","description":"Open-source vector database written in Rust, emphasizing high\nperformance, compact memory footprint, and powerful metadata\nfiltering. Offers both self-hosted and managed cloud options with\nACID-compliant transactions. PostgreSQL with pgvector is a strong\nalternative for teams that prefer consolidating vector search into\ntheir existing database rather than running separate infrastructure.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Qodo","quadrant":0,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.qodo.ai/","description":"AI code assistant with a multi-repo context engine that understands\ndependency graphs and flags cross-service breaking changes. Offers\n15+ agentic workflows for reviews, test generation, and\ndocumentation.\n","quadrantName":"Tools","ringName":"Assess"},{"label":"RAGAS","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.ragas.io/","description":"RAGAS is a framework for evaluating Retrieval-Augmented Generation\npipelines, providing metrics for faithfulness, relevance, and\ncorrectness.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"vLLM","quadrant":0,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/vllm-project/vllm","description":"High-throughput, memory-efficient open-source inference engine\ndelivering 35x+ request throughput over alternatives. Supports\nomni-modality serving. The go-to engine for teams self-hosting LLMs\nin production at scale.\n","quadrantName":"Tools","ringName":"Trial"},{"label":"Claude Agent SDK","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk","description":"Anthropic's SDK for building custom AI agents powered by Claude, with\nbuilt-in tool use, memory, and orchestration capabilities.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"CrewAI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.crewai.com/","description":"Multi-agent orchestration framework where you define agents with roles \nand goals that collaborate on tasks. Provides an intuitive abstraction \nfor teams thinking in terms of roles and responsibilities.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"DSPy","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://dspy-docs.vercel.app/","description":"A framework for programming with foundation models through\ndeclarative language model calls, automatic prompt optimization, and\nfine-tuning.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Google ADK (Agent Development Kit)","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://google.github.io/adk-docs/","description":"Open-source agent framework from Google, model-agnostic and\ndeployment-agnostic despite being optimized for Gemini/GCP. Features\nbuilt-in bidirectional audio/video streaming for human-like agent\nconversations.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Haystack","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://haystack.deepset.ai/","description":"Pipeline-first framework from deepset focused on production-grade\nsearch and RAG systems. Excels at complex document processing\nworkflows with strong enterprise search backend support\n(Elasticsearch, OpenSearch).\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Instructor","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://python.useinstructor.com/","description":"The most popular library for extracting structured, validated data\nfrom LLMs. Built on Pydantic with automatic retries, streaming, and\ntype-safe extraction. Supports 15+ providers across Python,\nTypeScript, Go, Ruby, Elixir, and Rust.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"LangChain","quadrant":2,"ring":3,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/","description":"A popular framework for developing applications powered by language\nmodels, providing chains, agents, and retrieval components.\nAlthough it's level of abstraction is good, it has frequently shown to \nmake the code  for even smaller projects too complicated to maintain \ncompared to the value it adds.\n","quadrantName":"Languages & Frameworks","ringName":"Hold"},{"label":"LangGraph","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.langchain.com/langgraph","description":"Graph-based agent orchestration from LangChain that represents agent\nworkflows as state machines with explicit control flow. Strong fit\nfor enterprise use cases requiring deterministic behavior.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"LlamaIndex","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://www.llamaindex.ai/","description":"The leading RAG-first framework with the most extensive data\nconnector ecosystem. Has evolved from a document processing tool to a\nfull agent framework while maintaining its core strength in data\nintegration and retrieval.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Mastra","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://mastra.ai/","description":"TypeScript framework providing building blocks for agents, tools, RAG\npipelines, workflows, memory, and orchestration. Sits above Vercel AI\nSDK in abstraction to accelerate backend agent development.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Microsoft Agent Framework","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://github.com/microsoft/agents","description":"Microsoft's framework for building, orchestrating, and managing AI\nagents with enterprise-grade tooling and Azure integration.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"OpenAI Agents SDK","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://openai.github.io/openai-agents-python/","description":"Production-ready agent framework with minimal abstractions (Agents,\nHandoffs, Guardrails) and built-in tracing. Provider-agnostic\ndespite the name, it is the successor to Swarm.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Outlines","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://github.com/dottxt-ai/outlines","description":"Pioneered the FSM approach to constrained decoding, compiling JSON\nSchemas and regex patterns into finite-state machines with\nprecomputed vocabulary indexes. Useful for teams running self-hosted\nmodels who need guaranteed output compliance.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"PydanticAI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://ai.pydantic.dev/","description":"Type-safe agent framework with structured I/O and MCP support. A\ngood fit for teams that value parameter correctness and Python typing\nin their AI applications.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Semantic Kernel","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://learn.microsoft.com/en-us/semantic-kernel/overview/","description":"Microsoft's lightweight SDK for integrating AI into existing\napplications, available in .NET, Python, and Java. Being merged with\nAutoGen into the unified Microsoft Agent Framework. Strong choice for\nteams with existing Microsoft technology investments.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Spring AI","quadrant":2,"ring":2,"moved":0,"active":true,"link":"","url":"https://spring.io/projects/spring-ai","description":"Spring's official AI framework, GA since May 2025. Brings Spring's\nabstraction philosophy to LLM integration — write code once, switch\nproviders via configuration. Supports all major AI providers, vector\ndatabases, Tool Calling, RAG, MCP, and structured output.\n","quadrantName":"Languages & Frameworks","ringName":"Assess"},{"label":"Vercel AI SDK","quadrant":2,"ring":1,"moved":0,"active":true,"link":"","url":"https://ai-sdk.dev/","description":"Streaming-first, provider-agnostic TypeScript SDK for building\nLLM-powered web applications. Features first-class agent\nabstractions, tool approval workflows, full MCP support, and deep\nReact/Next.js integration.\n","quadrantName":"Languages & Frameworks","ringName":"Trial"},{"label":"Amazon Bedrock","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://aws.amazon.com/bedrock/","description":"AWS's managed foundation model platform providing access to models\nfrom Anthropic, Meta, Mistral, and others without managing\ninfrastructure. Includes AgentCore for enterprise-grade agent systems\nwith access management, observability, and security controls.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Databricks","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.databricks.com/","description":"Unified data + AI platform with deep MLflow integration, Unity\nCatalog for AI asset governance, and Mosaic AI for model serving.\nStrong choice for organizations already invested in the Databricks\nlakehouse.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Graph databases","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://en.wikipedia.org/wiki/Graph_database","description":"Database systems optimized for storing and querying graph-structured\ndata, increasingly used for knowledge graphs in AI applications.\nPostgreSQL with the Apache AGE extension supports openCypher queries\nand hybrid SQL + graph operations, making it a viable alternative\nfor teams that don't need the full graph algorithm ecosystem of\ndedicated solutions like Neo4j.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Hugging Face","quadrant":1,"ring":0,"moved":0,"active":true,"link":"","url":"https://huggingface.co/","description":"The cornerstone of the open-source AI ecosystem, hosting 2M+ models,\n500K+ datasets, and 1M+ Spaces. Provides production tools (TGI, TEI,\nInference Endpoints) alongside the Transformers library. The GitHub\nof ML.\n","quadrantName":"Platforms","ringName":"Adopt"},{"label":"MLflow","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://mlflow.org/","description":"The most widely adopted open-source MLOps platform. MLflow 3.0 adds\nproduction-scale GenAI tracing, LLM evaluation, feedback collection,\nand prompt/application version tracking. Usable standalone or deeply\nintegrated with Databricks.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Modal","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://modal.com/","description":"Serverless cloud platform for AI/GPU workloads with a Python-native\nSDK. Sub-second cold starts, instant autoscaling, and a developer\nexperience that feels local. Eliminates infrastructure management for\ninference, training, and batch processing.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Neo4j","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://neo4j.com/","description":"The leading graph database, widely adopted for knowledge graphs and\nGraphRAG implementations. Cypher's readable query language and a\nrich algorithm library (PageRank, community detection, shortest\npath) make it the go-to for complex graph analytics. Recent releases\nadd native vector search with metadata filtering and AI-native\nCypher procedures, enabling hybrid vector + graph traversal in a\nsingle query. Best suited for teams with dedicated graph workloads\nthat justify separate infrastructure — teams already on PostgreSQL\nshould evaluate Apache AGE as a lighter-weight alternative.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Opik","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.comet.com/site/products/opik/","description":"Open-source LLM evaluation and observability platform covering the\nfull development lifecycle from experimentation to production\nmonitoring. An alternative to commercial observability tools.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"PostgreSQL (pgvector + AGE)","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://github.com/pgvector/pgvector","description":"PostgreSQL has become a compelling multi-model database for AI\nworkloads. **pgvector** adds native vector similarity search with\nHNSW and IVFFlat indexes, supporting up to 16,000 dimensions with\nL2, cosine, and inner product distance functions. The companion\n**pgvectorscale** extension (by Timescale) adds DiskANN-based\nindexing that benchmarks at 28x lower p95 latency than Pinecone at\n75% less cost on 50M vectors.\n\nFor graph workloads, **Apache AGE** brings openCypher query support,\nenabling hybrid SQL + Cypher queries with full ACID guarantees.\n\nThe key advantage is operational simplicity: one database for\nrelational, vector, and graph data — no sync pipelines, no\nadditional infrastructure, and access to PostgreSQL's mature\necosystem of replication, monitoring, and managed cloud services\n(RDS, Cloud SQL, Azure). A strong alternative to dedicated vector\nand graph databases for teams already running PostgreSQL.\n","quadrantName":"Platforms","ringName":"Trial"},{"label":"Replicate","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://replicate.com/","description":"Serverless GPU platform that simplifies model deployment via\nDockerized environments. The fastest way to deploy and test community\nmodels — great for prototyping, demos, and running niche text, image,\nvideo, and audio models.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Together AI","quadrant":1,"ring":2,"moved":0,"active":true,"link":"","url":"https://www.together.ai/","description":"Fast serverless API for 200+ open-source models (DeepSeek, Llama,\nQwen, Mistral) with OpenAI-compatible endpoints. Inference stack is\n4x faster than standard vLLM. Also offers fine-tuning and dedicated\nendpoints.\n","quadrantName":"Platforms","ringName":"Assess"},{"label":"Weights & Biases","quadrant":1,"ring":1,"moved":0,"active":true,"link":"","url":"https://wandb.ai/","description":"AI developer platform for experiment tracking, model management, and\nGenAI observability through W&B Weave. Weave provides tracing,\nevaluation, and debugging specifically for LLM-powered applications.\nThe standard for ML experiment tracking.\n","quadrantName":"Platforms","ringName":"Trial"}];
+  var ringColors = { Adopt: '#5ba300', Trial: '#009eb0', Assess: '#c7ba00', Hold: '#e09b96' };
+  var lookup = {};
+  entries.forEach(function(e) { lookup[e.label] = e; });
+
+  function renderMd(text) {
+    var s = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    s = s.replace(/\n\n+/g, '<br>').replace(/\n/g, ' ');
+    return s;
+  }
+
+  var overlay = document.getElementById('modal-overlay');
+  var modalTitle = document.getElementById('modal-title');
+  var modalMeta = document.getElementById('modal-meta');
+  var modalDesc = document.getElementById('modal-desc');
+  var modalLink = document.getElementById('modal-link');
+  var modalClose = document.getElementById('modal-close');
+
+  function openModal(entry) {
+    modalTitle.textContent = entry.label;
+    var rc = ringColors[entry.ringName] || '#666';
+    modalMeta.innerHTML =
+      '<span class="badge-quadrant">' + entry.quadrantName + '</span>' +
+      '<span class="badge-ring" style="background:' + rc + '">' + entry.ringName + '</span>';
+    modalDesc.innerHTML = entry.description ? renderMd(entry.description) : '<em>No description available.</em>';
+    var url = entry.url || entry.link || '';
+    if (url) {
+      modalLink.href = url;
+      modalLink.textContent = url;
+    } else {
+      modalLink.href = '';
+      modalLink.textContent = '';
+    }
+    overlay.classList.add('visible');
+  }
+
+  function closeModal() { overlay.classList.remove('visible'); }
+
+  modalClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+  // Intercept blip clicks (d3 binds entry data to each <g class="blip">)
+  document.querySelectorAll('.blip').forEach(function(g) {
+    var d = g.__data__;
+    if (!d || !d.label) return;
+    var entry = lookup[d.label];
+    if (!entry) return;
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      openModal(entry);
+    });
+  });
+
+  // Intercept legend item clicks (text elements with id="legendItemN")
+  document.querySelectorAll('[id^="legendItem"]').forEach(function(text) {
+    var d = text.__data__;
+    if (!d || !d.label) return;
+    var entry = lookup[d.label];
+    if (!entry) return;
+    var anchor = text.parentNode;
+    if (anchor && anchor.tagName.toLowerCase() === 'a') {
+      anchor.removeAttribute('href');
+      anchor.style.cursor = 'pointer';
+    }
+    (anchor || text).addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      openModal(entry);
+    });
+  });
+
+  // Also handle deprecated item clicks to show modal
+  var depEntries = [{"name":"Apache Airflow","description":"A workflow orchestration platform for data pipelines. Deprecated in\nfavor of more modern alternatives.\n","url":"https://airflow.apache.org/"}];
+  document.querySelectorAll('.deprecated-item').forEach(function(el) {
+    var name = el.getAttribute('data-name');
+    var dep = depEntries.find(function(d) { return d.name === name; });
+    if (!dep) return;
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openModal({
+        label: dep.name,
+        description: dep.description,
+        link: dep.url || '',
+        quadrantName: 'Deprecated',
+        ringName: 'Hold'
+      });
+    });
   });
 })();
 </script>

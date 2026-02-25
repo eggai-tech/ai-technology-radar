@@ -1,0 +1,9 @@
+name: "Knowledge Distillation"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  Training a smaller student model to replicate a larger teacher
+  model's capabilities, enabling faster, cheaper production
+  deployments. Increasingly practical with LoRA/QLoRA for
+  parameter-efficient transfer.
+url: "https://www.ibm.com/think/topics/knowledge-distillation"

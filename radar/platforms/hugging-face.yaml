@@ -1,0 +1,9 @@
+name: "Hugging Face"
+quadrant: "Platforms"
+ring: "Adopt"
+description: |
+  The cornerstone of the open-source AI ecosystem, hosting 2M+ models,
+  500K+ datasets, and 1M+ Spaces. Provides production tools (TGI, TEI,
+  Inference Endpoints) alongside the Transformers library. The GitHub
+  of ML.
+url: "https://huggingface.co/"

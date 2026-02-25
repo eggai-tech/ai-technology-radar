@@ -1,0 +1,9 @@
+name: "Weights & Biases"
+quadrant: "Platforms"
+ring: "Trial"
+description: |
+  AI developer platform for experiment tracking, model management, and
+  GenAI observability through W&B Weave. Weave provides tracing,
+  evaluation, and debugging specifically for LLM-powered applications.
+  The standard for ML experiment tracking.
+url: "https://wandb.ai/"

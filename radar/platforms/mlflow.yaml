@@ -1,0 +1,9 @@
+name: "MLflow"
+quadrant: "Platforms"
+ring: "Trial"
+description: |
+  The most widely adopted open-source MLOps platform. MLflow 3.0 adds
+  production-scale GenAI tracing, LLM evaluation, feedback collection,
+  and prompt/application version tracking. Usable standalone or deeply
+  integrated with Databricks.
+url: "https://mlflow.org/"

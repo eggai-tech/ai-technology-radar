@@ -1,0 +1,8 @@
+name: "Mastra"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  TypeScript framework providing building blocks for agents, tools, RAG
+  pipelines, workflows, memory, and orchestration. Sits above Vercel AI
+  SDK in abstraction to accelerate backend agent development.
+url: "https://mastra.ai/"

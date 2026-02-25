@@ -1,0 +1,9 @@
+name: "vLLM"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  High-throughput, memory-efficient open-source inference engine
+  delivering 35x+ request throughput over alternatives. Supports
+  omni-modality serving. The go-to engine for teams self-hosting LLMs
+  in production at scale.
+url: "https://github.com/vllm-project/vllm"

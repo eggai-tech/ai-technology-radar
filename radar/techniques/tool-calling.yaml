@@ -1,4 +1,11 @@
 name: "Tool Calling"
 quadrant: "Techniques"
-ring: "Adopt"
-description: "Enabling LLMs to invoke external tools and APIs, allowing them to perform actions and retrieve real-time information beyond their training data."
+ring: "Trial"
+description: |
+  Enabling LLMs to invoke external tools and APIs, allowing them to
+  perform actions and retrieve real-time information beyond their
+  training data.
+  Tool calling is a key method to increase LLM's awareness. Be mindful of how many tools
+  fit in your LLM's context window. You'll possibly be fine up to ~20 tools but this 
+  approach by itself will very likely break down once you reach 40-50 tools.
+  There are [workarounds](https://medium.com/zar-engineering/code-mode-mcp-ac17c2a1038b) or you need specialised agents.

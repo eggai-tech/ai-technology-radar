@@ -1,0 +1,9 @@
+name: "Arize Phoenix"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  Open-source AI observability platform that accepts traces via
+  standard OTLP protocol. Provides tracing, evaluation, datasets,
+  experiments, and prompt management. Self-hosted with full data
+  control for strict data-residency requirements.
+url: "https://phoenix.arize.com/"

@@ -1,0 +1,11 @@
+name: "Qdrant"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  Open-source vector database written in Rust, emphasizing high
+  performance, compact memory footprint, and powerful metadata
+  filtering. Offers both self-hosted and managed cloud options with
+  ACID-compliant transactions. PostgreSQL with pgvector is a strong
+  alternative for teams that prefer consolidating vector search into
+  their existing database rather than running separate infrastructure.
+url: "https://qdrant.tech/"

@@ -1,0 +1,9 @@
+name: "LLM Guardrails"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  Runtime input/output filtering for LLM applications including prompt
+  injection detection, PII redaction, and topic control. Frameworks
+  like NeMo Guardrails and Guardrails AI are maturing, making this
+  essential for production AI systems.
+url: "https://github.com/NVIDIA/NeMo-Guardrails"

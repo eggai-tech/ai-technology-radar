@@ -1,5 +1,8 @@
 name: "RAGAS"
 quadrant: "Tools"
 ring: "Trial"
-description: "RAGAS is a framework for evaluating Retrieval-Augmented Generation pipelines, providing metrics for faithfulness, relevance, and correctness."
+description: |
+  RAGAS is a framework for evaluating Retrieval-Augmented Generation
+  pipelines, providing metrics for faithfulness, relevance, and
+  correctness.
 url: "https://docs.ragas.io/"

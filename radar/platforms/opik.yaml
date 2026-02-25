@@ -1,0 +1,8 @@
+name: "Opik"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  Open-source LLM evaluation and observability platform covering the
+  full development lifecycle from experimentation to production
+  monitoring. An alternative to commercial observability tools.
+url: "https://www.comet.com/site/products/opik/"

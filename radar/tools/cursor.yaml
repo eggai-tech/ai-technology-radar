@@ -1,0 +1,8 @@
+name: "Cursor"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  VS Code fork rebuilt around AI with agent mode, multi-file editing,
+  and enterprise readiness (SOC 2, SSO). Widely adopted for AI-assisted
+  development across organizations of all sizes.
+url: "https://www.cursor.com/"

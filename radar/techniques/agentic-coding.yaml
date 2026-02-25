@@ -1,0 +1,9 @@
+name: "Agentic Coding"
+quadrant: "Techniques"
+ring: "Trial"
+description: |
+  Using AI agents (Claude Code, Cursor, Cline) as autonomous coding
+  partners that read codebases, edit files, run commands, and iterate.
+  Moving beyond autocomplete to full task execution within development
+  workflows.
+url: "https://www.anthropic.com/engineering/claude-code-best-practices"

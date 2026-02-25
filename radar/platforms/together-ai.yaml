@@ -1,0 +1,9 @@
+name: "Together AI"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  Fast serverless API for 200+ open-source models (DeepSeek, Llama,
+  Qwen, Mistral) with OpenAI-compatible endpoints. Inference stack is
+  4x faster than standard vLLM. Also offers fine-tuning and dedicated
+  endpoints.
+url: "https://www.together.ai/"

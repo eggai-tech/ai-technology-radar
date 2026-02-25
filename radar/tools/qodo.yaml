@@ -1,0 +1,9 @@
+name: "Qodo"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  AI code assistant with a multi-repo context engine that understands
+  dependency graphs and flags cross-service breaking changes. Offers
+  15+ agentic workflows for reviews, test generation, and
+  documentation.
+url: "https://www.qodo.ai/"

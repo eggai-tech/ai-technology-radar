@@ -1,0 +1,8 @@
+name: "PydanticAI"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Type-safe agent framework with structured I/O and MCP support. A
+  good fit for teams that value parameter correctness and Python typing
+  in their AI applications.
+url: "https://ai.pydantic.dev/"

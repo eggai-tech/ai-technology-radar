@@ -1,0 +1,10 @@
+name: "Claude Code"
+quadrant: "Tools"
+ring: "Adopt"
+description: |
+  Anthropic's terminal-based agentic coding tool with a 200K context window, 
+  multi-agent sub-tasks, and deep codebase understanding. 
+  Leading the shift from code suggestions to autonomous coding.
+  This is the leading coding tool and we recommend its adoption for software 
+  engineering and more.
+url: "https://docs.anthropic.com/en/docs/claude-code"

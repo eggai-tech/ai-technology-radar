@@ -1,0 +1,22 @@
+name: "PostgreSQL (pgvector + AGE)"
+quadrant: "Platforms"
+ring: "Trial"
+description: |
+  PostgreSQL has become a compelling multi-model database for AI
+  workloads. **pgvector** adds native vector similarity search with
+  HNSW and IVFFlat indexes, supporting up to 16,000 dimensions with
+  L2, cosine, and inner product distance functions. The companion
+  **pgvectorscale** extension (by Timescale) adds DiskANN-based
+  indexing that benchmarks at 28x lower p95 latency than Pinecone at
+  75% less cost on 50M vectors.
+
+  For graph workloads, **Apache AGE** brings openCypher query support,
+  enabling hybrid SQL + Cypher queries with full ACID guarantees.
+
+  The key advantage is operational simplicity: one database for
+  relational, vector, and graph data — no sync pipelines, no
+  additional infrastructure, and access to PostgreSQL's mature
+  ecosystem of replication, monitoring, and managed cloud services
+  (RDS, Cloud SQL, Azure). A strong alternative to dedicated vector
+  and graph databases for teams already running PostgreSQL.
+url: "https://github.com/pgvector/pgvector"

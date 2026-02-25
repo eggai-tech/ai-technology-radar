@@ -1,0 +1,9 @@
+name: "Outlines"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Pioneered the FSM approach to constrained decoding, compiling JSON
+  Schemas and regex patterns into finite-state machines with
+  precomputed vocabulary indexes. Useful for teams running self-hosted
+  models who need guaranteed output compliance.
+url: "https://github.com/dottxt-ai/outlines"

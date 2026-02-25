@@ -1,0 +1,9 @@
+name: "Prompt Caching"
+quadrant: "Techniques"
+ring: "Adopt"
+description: |
+  Reusing KV tensors across API requests when prompts share common
+  prefixes, natively supported by Anthropic, OpenAI, and Google.
+  Delivers 50-90% cost reduction and major latency improvements with
+  minimal code changes.
+url: "https://www.anthropic.com/news/prompt-caching"

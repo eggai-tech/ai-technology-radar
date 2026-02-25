@@ -1,5 +1,8 @@
 name: "Evals"
 quadrant: "Techniques"
 ring: "Adopt"
-description: "Evals driven development is the concept of putting data at the forefront of LLM based systems, whithout which no development should happen."
+description: |
+  Evals driven development is the concept of putting data at the
+  forefront of LLM based systems, whithout which no development
+  should happen.
 url: "https://newsletter.pragmaticengineer.com/p/evals"

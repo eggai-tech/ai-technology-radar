@@ -1,0 +1,9 @@
+name: "LlamaIndex"
+quadrant: "Languages & Frameworks"
+ring: "Trial"
+description: |
+  The leading RAG-first framework with the most extensive data
+  connector ecosystem. Has evolved from a document processing tool to a
+  full agent framework while maintaining its core strength in data
+  integration and retrieval.
+url: "https://www.llamaindex.ai/"

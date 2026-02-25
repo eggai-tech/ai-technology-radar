@@ -1,0 +1,9 @@
+name: "Modal"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  Serverless cloud platform for AI/GPU workloads with a Python-native
+  SDK. Sub-second cold starts, instant autoscaling, and a developer
+  experience that feels local. Eliminates infrastructure management for
+  inference, training, and batch processing.
+url: "https://modal.com/"

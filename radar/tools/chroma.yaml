@@ -1,0 +1,10 @@
+name: "Chroma"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  Developer-friendly, lightweight, open-source vector database
+  excellent for prototyping and small/medium RAG applications. Easy to
+  embed directly in Python applications. For teams already on
+  PostgreSQL, pgvector offers similar ease of use with the added
+  benefit of keeping data in a single database.
+url: "https://www.trychroma.com/"

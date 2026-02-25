@@ -1,0 +1,9 @@
+name: "Instructor"
+quadrant: "Languages & Frameworks"
+ring: "Trial"
+description: |
+  The most popular library for extracting structured, validated data
+  from LLMs. Built on Pydantic with automatic retries, streaming, and
+  type-safe extraction. Supports 15+ providers across Python,
+  TypeScript, Go, Ruby, Elixir, and Rust.
+url: "https://python.useinstructor.com/"

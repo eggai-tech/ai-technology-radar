@@ -1,0 +1,9 @@
+name: "Replicate"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  Serverless GPU platform that simplifies model deployment via
+  Dockerized environments. The fastest way to deploy and test community
+  models — great for prototyping, demos, and running niche text, image,
+  video, and audio models.
+url: "https://replicate.com/"

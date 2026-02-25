@@ -1,0 +1,9 @@
+name: "Amazon Bedrock"
+quadrant: "Platforms"
+ring: "Assess"
+description: |
+  AWS's managed foundation model platform providing access to models
+  from Anthropic, Meta, Mistral, and others without managing
+  infrastructure. Includes AgentCore for enterprise-grade agent systems
+  with access management, observability, and security controls.
+url: "https://aws.amazon.com/bedrock/"

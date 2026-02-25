@@ -1,0 +1,8 @@
+name: "CrewAI"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Multi-agent orchestration framework where you define agents with roles 
+  and goals that collaborate on tasks. Provides an intuitive abstraction 
+  for teams thinking in terms of roles and responsibilities.
+url: "https://www.crewai.com/"

@@ -1,0 +1,8 @@
+name: "Portkey"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  AI gateway for routing requests across 1600+ LLMs with built-in
+  observability, guardrails, fallbacks, and cost governance. Named a
+  Gartner Cool Vendor 2025 in LLM Observability.
+url: "https://portkey.ai/"

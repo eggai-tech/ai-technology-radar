@@ -1,5 +1,7 @@
 name: "LangSmith"
 quadrant: "Tools"
 ring: "Trial"
-description: "A platform for debugging, testing, evaluating, and monitoring LLM applications built on any framework."
+description: |
+  A platform for debugging, testing, evaluating, and monitoring LLM
+  applications built on any framework.
 url: "https://www.langchain.com/langsmith"

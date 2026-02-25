@@ -1,0 +1,9 @@
+name: "Vercel AI SDK"
+quadrant: "Languages & Frameworks"
+ring: "Trial"
+description: |
+  Streaming-first, provider-agnostic TypeScript SDK for building
+  LLM-powered web applications. Features first-class agent
+  abstractions, tool approval workflows, full MCP support, and deep
+  React/Next.js integration.
+url: "https://ai-sdk.dev/"

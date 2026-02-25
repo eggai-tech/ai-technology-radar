@@ -1,0 +1,10 @@
+name: "BMAD"
+quadrant: "Techniques"
+ring: "Assess"
+description: |
+  BMAD (Breakthrough Method for Agile AI-Driven Development) is a
+  framework that guides software teams through planning, architecture,
+  and implementation using specialized AI agents. It organizes work
+  into defined phases—analysis, planning, solutioning, and
+  implementation—to streamline AI-assisted software delivery.
+url: "https://docs.bmad-method.org/tutorials/getting-started/"

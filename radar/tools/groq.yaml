@@ -1,0 +1,9 @@
+name: "Groq"
+quadrant: "Tools"
+ring: "Assess"
+description: |
+  Purpose-built Language Processing Unit (LPU) hardware delivering
+  ultra-fast inference with up to 18x faster processing than
+  traditional GPUs. Extremely low time-to-first-token for
+  latency-critical applications with an OpenAI-compatible API.
+url: "https://groq.com/"

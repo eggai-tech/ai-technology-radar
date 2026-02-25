@@ -1,5 +1,7 @@
 name: "RAG"
 quadrant: "Techniques"
 ring: "Trial"
-description: "Retrieval-Augmented Generation combines LLM capabilities with external knowledge retrieval to produce more accurate, grounded responses."
+description: |
+  Retrieval-Augmented Generation combines LLM capabilities with external
+  knowledge retrieval to produce more accurate, grounded responses.
 url: "https://en.wikipedia.org/wiki/Retrieval-augmented_generation"

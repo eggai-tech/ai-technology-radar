@@ -1,0 +1,8 @@
+name: "LangGraph"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Graph-based agent orchestration from LangChain that represents agent
+  workflows as state machines with explicit control flow. Strong fit
+  for enterprise use cases requiring deterministic behavior.
+url: "https://www.langchain.com/langgraph"

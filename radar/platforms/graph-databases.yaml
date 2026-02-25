@@ -1,5 +1,11 @@
 name: "Graph databases"
 quadrant: "Platforms"
-ring: "Assess"
-description: "Database systems optimized for storing and querying graph-structured data, increasingly used for knowledge graphs in AI applications."
+ring: "Trial"
+description: |
+  Database systems optimized for storing and querying graph-structured
+  data, increasingly used for knowledge graphs in AI applications.
+  PostgreSQL with the Apache AGE extension supports openCypher queries
+  and hybrid SQL + graph operations, making it a viable alternative
+  for teams that don't need the full graph algorithm ecosystem of
+  dedicated solutions like Neo4j.
 url: "https://en.wikipedia.org/wiki/Graph_database"

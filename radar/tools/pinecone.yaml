@@ -1,0 +1,11 @@
+name: "Pinecone"
+quadrant: "Tools"
+ring: "Trial"
+description: |
+  Managed serverless vector database with exceptional query speed and
+  multi-region performance. Minimal operational overhead makes it the
+  leading choice for production-grade vector search without managing
+  infrastructure. Teams already running PostgreSQL should consider
+  pgvector + pgvectorscale as a strong alternative that benchmarks
+  competitively at significantly lower cost.
+url: "https://www.pinecone.io/"

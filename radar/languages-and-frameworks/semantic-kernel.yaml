@@ -1,0 +1,9 @@
+name: "Semantic Kernel"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Microsoft's lightweight SDK for integrating AI into existing
+  applications, available in .NET, Python, and Java. Being merged with
+  AutoGen into the unified Microsoft Agent Framework. Strong choice for
+  teams with existing Microsoft technology investments.
+url: "https://learn.microsoft.com/en-us/semantic-kernel/overview/"
