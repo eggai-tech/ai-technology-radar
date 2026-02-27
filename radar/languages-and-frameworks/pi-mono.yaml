@@ -1,0 +1,10 @@
+name: "pi-mono"
+quadrant: "Languages & Frameworks"
+ring: "Assess"
+description: |
+  Open-source TypeScript monorepo for building and deploying AI agents.
+  Provides a unified LLM API across providers (OpenAI, Anthropic, Google),
+  an agent runtime with tool calling, a coding agent CLI, Slack integration,
+  terminal UI components, web chat components, and GPU pod management for
+  vLLM deployments.
+url: "https://github.com/badlogic/pi-mono"
