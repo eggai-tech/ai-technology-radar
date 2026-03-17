@@ -1,0 +1,8 @@
+name: "NemoClaw"
+quadrant: "Languages and Frameworks"
+ring: "Assess"
+description: |
+  NVIDIA's open-source framework for building tool-calling AI agents with
+  structured reasoning and reliable function execution. Designed to improve
+  accuracy and consistency of LLM tool use in agentic workflows.
+url: "https://github.com/NVIDIA/NeMo-Claw"
